@@ -10,17 +10,10 @@ serve(async (req) => {
     return new Response('ok', { headers: corsHeaders })
   }
 
-  const { code } = await req.json()
+  const { token } = await req.json()
 
-  const response = await fetch('https://www.strava.com/oauth/token', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      client_id: Deno.env.get('STRAVA_CLIENT_ID'),
-      client_secret: Deno.env.get('STRAVA_CLIENT_SECRET'),
-      code: code,
-      grant_type: 'authorization_code'
-    })
+  const response = await fetch('https://www.strava.com/api/v3/clubs/940123/members?per_page=50', {
+    headers: { 'Authorization': `Bearer ${token}` }
   })
 
   const data = await response.json()

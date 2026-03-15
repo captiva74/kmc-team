@@ -244,6 +244,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <div class="page-header">
         <div class="page-title">LES <span>MEMBRES</span></div>
         <button class="btn" onclick="addMember()">+ Ajouter</button>
+        <button class="btn-ghost" onclick="importerMembresClub()" style="color:#fc4c02;border-color:#fc4c0240">Importer depuis Strava</button>
       </div>
       <input id="recherche-membre" class="input" placeholder="Rechercher un membre..." 
         oninput="filtrerMembres(this.value)" 

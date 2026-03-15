@@ -616,3 +616,44 @@ if (stravaCode) {
   recupererTokenStrava(stravaCode)
   window.history.replaceState({}, document.title, '/')
 }
+
+async function importerMembresClub() {
+  const token = localStorage.getItem('strava_token')
+  if (!token) {
+    alert('Connectez d\'abord Strava dans la sidebar !')
+    return
+  }
+
+  const { data, error } = await db.functions.invoke('strava-club', {
+    body: { token }
+  })
+
+  if (error) { console.error(error); return }
+
+  let importes = 0
+  for (const athlete of data) {
+    const nom = `${athlete.firstname} ${athlete.lastname}`
+
+    const { data: existant } = await db
+      .from('membres')
+      .select('id')
+      .eq('nom', nom)
+      .single()
+
+    if (existant) continue
+
+    await db.from('membres').insert([{
+      nom: nom,
+      role: 'Équipier',
+      specialite: 'Cycliste',
+      km_mois: 0,
+      points: 0
+    }])
+    importes++
+  }
+
+  alert(`${importes} nouveaux membres importés depuis Strava !`)
+  chargerMembres()
+  chargerClassement()
+  chargerClassementPoints()
+}
