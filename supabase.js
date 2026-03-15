@@ -37,6 +37,7 @@ async function chargerMembres() {
     </div>
     <div class="rank-badge ${badge}">${index + 1}</div>
     <button onclick="modifierKm('${membre.id}', ${membre.km_mois})" style="background:none;border:1px solid #ffffff20;color:#6b7280;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;margin-left:6px">✏️</button>
+    <button onclick="modifierPoints('${membre.id}', ${membre.points})" style="background:none;border:1px solid #e8ff4740;color:#e8ff47;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;margin-left:4px">★</button>
     <button onclick="supprimerMembre('${membre.id}')" style="background:none;border:1px solid #ff6b3540;color:#ff6b35;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;margin-left:4px">🗑️</button>
     `
     liste.appendChild(div)
@@ -348,3 +349,51 @@ async function supprimerParcours(id) {
   if (error) { console.error(error); return }
   chargerParcours()
 }
+
+async function modifierPoints(id, pointsActuels) {
+  const nouveau = prompt('Nouveaux points :', pointsActuels)
+  if (nouveau === null) return
+
+  const { error } = await db
+    .from('membres')
+    .update({ points: parseInt(nouveau) })
+    .eq('id', id)
+
+  if (error) { console.error(error); return }
+  chargerMembres()
+  chargerClassement()
+}
+
+async function chargerClassementPoints() {
+  const { data, error } = await db
+    .from('membres')
+    .select('nom, role, points')
+    .order('points', { ascending: false })
+
+  if (error) { console.error(error); return }
+
+  const liste = document.querySelector('#tab-pts .member-list')
+  liste.innerHTML = ''
+
+  const medailles = ['🥇','🥈','🥉']
+  const badges = ['','silver','bronze','other','other','other']
+
+  data.forEach((membre, index) => {
+    const badge = badges[index] || 'other'
+    const medaille = medailles[index] || (index + 1)
+
+    const div = document.createElement('div')
+    div.className = 'member-row'
+    div.innerHTML = `
+      <div class="rank-badge ${badge}" style="width:28px;height:28px;font-size:13px">${medaille}</div>
+      <div class="member-info">
+        <div class="member-name">${membre.nom}</div>
+        <div class="member-role">${membre.role || ''}</div>
+      </div>
+      <div class="member-km">${membre.points} pts</div>
+    `
+    liste.appendChild(div)
+  })
+}
+
+chargerClassementPoints()
