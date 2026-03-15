@@ -184,6 +184,7 @@ async function seConnecter() {
   chargerClassement()
   chargerParcours()
   chargerDashboard()
+  afficherProfil()
 }
 
 async function verifierSession() {
@@ -206,6 +207,7 @@ chargerClassement()
 chargerParcours()
 chargerClassementPoints()
 chargerDashboard()
+afficherProfil()
 
 async function seDeconnecter() {
   await db.auth.signOut()
@@ -437,3 +439,11 @@ async function chargerDashboard() {
 }
 
 chargerDashboard()
+
+async function afficherProfil() {
+  const { data } = await db.auth.getSession()
+  if (data.session) {
+    const email = data.session.user.email
+    document.getElementById('user-email').textContent = email
+  }
+}

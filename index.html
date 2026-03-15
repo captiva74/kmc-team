@@ -163,6 +163,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 <div class="app">
   <div class="sidebar">
     <div class="logo">KMC<br><span>Team Manager</span></div>
+    <div id="user-info" style="background:#1c2030;border-radius:8px;padding:8px 12px;margin-bottom:1rem;font-size:12px;">
+      <div style="color:#6b7280;font-size:11px;margin-bottom:2px">Connecté en tant que</div>
+      <div id="user-email" style="color:#e8ff47;font-weight:500;word-break:break-all"></div>
+    </div>
     <button class="nav-item active" onclick="showPage('dashboard')"><span class="nav-icon">◈</span>Dashboard</button>
     <button class="nav-item" onclick="showPage('membres')"><span class="nav-icon">◎</span>Membres</button>
     <button class="nav-item" onclick="showPage('calendrier')"><span class="nav-icon">▦</span>Calendrier</button>
