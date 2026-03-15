@@ -1,5 +1,17 @@
 
 <!DOCTYPE html>
+<div id="login-page" style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#0d0f14">
+  <div style="background:#151820;border:1px solid #ffffff12;border-radius:16px;padding:2.5rem;width:340px">
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:2px;color:#e8ff47;margin-bottom:4px">VELO</div>
+    <div style="font-size:14px;color:#6b7280;margin-bottom:2rem">Team Manager — Connexion</div>
+    <input id="login-email" type="email" placeholder="Email" style="width:100%;background:#1c2030;border:1px solid #ffffff12;border-radius:8px;padding:10px 14px;font-size:14px;color:#f0f2f8;margin-bottom:12px;box-sizing:border-box" />
+    <input id="login-password" type="password" placeholder="Mot de passe" style="width:100%;background:#1c2030;border:1px solid #ffffff12;border-radius:8px;padding:10px 14px;font-size:14px;color:#f0f2f8;margin-bottom:16px;box-sizing:border-box" />
+    <button onclick="seConnecter()" style="width:100%;background:#e8ff47;color:#0d0f14;border:none;border-radius:8px;padding:11px;font-size:14px;font-weight:700;cursor:pointer">Se connecter</button>
+    <div id="login-error" style="color:#ff6b35;font-size:13px;margin-top:12px;display:none">Email ou mot de passe incorrect.</div>
+  </div>
+</div>
+
+<div id="app-page" style="display:none">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap');
 

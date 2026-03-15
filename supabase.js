@@ -159,3 +159,38 @@ async function chargerParcours() {
 }
 
 chargerParcours()
+
+async function seConnecter() {
+  const email = document.getElementById('login-email').value.trim()
+  const password = document.getElementById('login-password').value.trim()
+
+  const { data, error } = await db.auth.signInWithPassword({ email, password })
+
+  if (error) {
+    document.getElementById('login-error').style.display = 'block'
+    return
+  }
+
+  document.getElementById('login-page').style.display = 'none'
+  document.getElementById('app-page').style.display = 'block'
+
+  chargerMembres()
+  chargerEvenements()
+  chargerClassement()
+  chargerParcours()
+}
+
+async function verifierSession() {
+  const { data } = await db.auth.getSession()
+
+  if (data.session) {
+    document.getElementById('login-page').style.display = 'none'
+    document.getElementById('app-page').style.display = 'block'
+    chargerMembres()
+    chargerEvenements()
+    chargerClassement()
+    chargerParcours()
+  }
+}
+
+verifierSession()
