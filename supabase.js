@@ -147,15 +147,16 @@ async function chargerParcours() {
     const div = document.createElement('div')
     div.className = 'route-item'
     div.innerHTML = `
-      <div class="route-icon" style="background:${couleurs[index % couleurs.length]}">${icones[index % icones.length]}</div>
-      <div class="route-data">
+    <div class="route-icon" style="background:${couleurs[index % couleurs.length]}">${icones[index % icones.length]}</div>
+    <div class="route-data">
         <div class="route-name">${parcours.nom}</div>
         <div class="route-meta">${dateStr} · ↑ ${parcours.denivele_m || 0}m · ${duree}</div>
-      </div>
-      <div>
+    </div>
+    <div>
         <div class="route-km">${parcours.distance_km || 0}</div>
         <div class="route-unit">km</div>
-      </div>
+    </div>
+    <button onclick="supprimerParcours('${parcours.id}')" style="background:none;border:1px solid #ff6b3540;color:#ff6b35;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;margin-left:8px">🗑️</button>
     `
     liste.appendChild(div)
   })
@@ -333,5 +334,17 @@ async function sauvegarderParcours() {
   document.getElementById('par-duree').value = ''
   document.getElementById('form-parcours').style.display = 'none'
 
+  chargerParcours()
+}
+
+async function supprimerParcours(id) {
+  if (!confirm('Supprimer ce parcours ?')) return
+
+  const { error } = await db
+    .from('parcours')
+    .delete()
+    .eq('id', id)
+
+  if (error) { console.error(error); return }
   chargerParcours()
 }
