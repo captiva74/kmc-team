@@ -68,12 +68,13 @@ async function chargerEvenements() {
     const div = document.createElement('div')
     div.className = `event-item ${typeBadge}`
     div.innerHTML = `
-      <div class="event-date">${jour}</div>
-      <div class="event-info">
+    <div class="event-date">${jour}</div>
+    <div class="event-info">
         <div class="event-name">${evt.nom}</div>
         <div class="event-detail">${evt.lieu || ''} — ${evt.distance_km || ''} km</div>
-      </div>
-      <span class="event-badge ${badgeClass}">${badgeLabel}</span>
+    </div>
+    <span class="event-badge ${badgeClass}">${badgeLabel}</span>
+    <button onclick="supprimerEvenement('${evt.id}')" style="background:none;border:1px solid #ff6b3540;color:#ff6b35;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;margin-left:8px">🗑️</button>
     `
     liste.appendChild(div)
   })
@@ -281,5 +282,17 @@ async function sauvegarderEvenement() {
   document.getElementById('evt-distance').value = ''
   document.getElementById('form-evenement').style.display = 'none'
 
+  chargerEvenements()
+}
+
+async function supprimerEvenement(id) {
+  if (!confirm('Supprimer cet événement ?')) return
+
+  const { error } = await db
+    .from('evenements')
+    .delete()
+    .eq('id', id)
+
+  if (error) { console.error(error); return }
   chargerEvenements()
 }
