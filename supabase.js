@@ -624,14 +624,19 @@ async function importerMembresClub() {
     return
   }
 
-  const { data, error } = await db.functions.invoke('strava-club', {
-    body: { token }
+  const response = await fetch('https://www.strava.com/api/v3/clubs/940123/members?per_page=50', {
+    headers: { 'Authorization': `Bearer ${token}` }
   })
 
-  if (error) { console.error(error); return }
+  if (!response.ok) {
+    alert('Erreur Strava — vérifiez que vous êtes connecté à Strava')
+    return
+  }
+
+  const athletes = await response.json()
 
   let importes = 0
-  for (const athlete of data) {
+  for (const athlete of athletes) {
     const nom = `${athlete.firstname} ${athlete.lastname}`
 
     const { data: existant } = await db
