@@ -26,7 +26,9 @@ async function chargerMembres() {
     const div = document.createElement('div')
     div.className = 'member-row'
     div.innerHTML = `
-    <div class="avatar" style="background:${couleur}20;color:${couleur}">${initiales}</div>
+    <div class="avatar" style="background:${couleur}20;color:${couleur};overflow:hidden">
+      ${membre.photo_url ? `<img src="${membre.photo_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">` : initiales}
+    </div>
     <div class="member-info">
         <div class="member-name">${membre.nom}</div>
         <div class="member-role">${membre.role || ''} · ${membre.specialite || ''}</div>
@@ -38,6 +40,7 @@ async function chargerMembres() {
     <div class="rank-badge ${badge}">${index + 1}</div>
     <button onclick="modifierKm('${membre.id}', ${membre.km_mois})" style="background:none;border:1px solid #ffffff20;color:#6b7280;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;margin-left:6px">✏️</button>
     <button onclick="modifierPoints('${membre.id}', ${membre.points})" style="background:none;border:1px solid #e8ff4740;color:#e8ff47;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;margin-left:4px">★</button>
+    <button onclick="uploaderPhoto('${membre.id}')" style="background:none;border:1px solid #4f9eff40;color:#4f9eff;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;margin-left:4px">📷</button>
     <button onclick="supprimerMembre('${membre.id}')" style="background:none;border:1px solid #ff6b3540;color:#ff6b35;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;margin-left:4px">🗑️</button>
     `
     liste.appendChild(div)
@@ -462,4 +465,35 @@ function filtrerMembres(texte) {
     const nom = row.querySelector('.member-name').textContent.toLowerCase()
     row.style.display = nom.includes(texte.toLowerCase()) ? 'flex' : 'none'
   })
+}
+
+function uploaderPhoto(membreId) {
+  const input = document.createElement('input')
+  input.type = 'file'
+  input.accept = 'image/*'
+  input.onchange = async (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+
+    const nomFichier = `${membreId}.${file.name.split('.').pop()}`
+
+    const { error: uploadError } = await db.storage
+      .from('photos')
+      .upload(nomFichier, file, { upsert: true })
+
+    if (uploadError) { console.error(uploadError); return }
+
+    const { data } = db.storage
+      .from('photos')
+      .getPublicUrl(nomFichier)
+
+    const { error } = await db
+      .from('membres')
+      .update({ photo_url: data.publicUrl })
+      .eq('id', membreId)
+
+    if (error) { console.error(error); return }
+    chargerMembres()
+  }
+  input.click()
 }
