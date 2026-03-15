@@ -38,7 +38,8 @@ async function chargerMembres() {
         <div class="member-km-label">km / mois</div>
     </div>
     <div class="rank-badge ${badge}">${index + 1}</div>
-    <button onclick="modifierKm('${membre.id}', ${membre.km_mois})" style="background:none;border:1px solid #ffffff20;color:#6b7280;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;margin-left:6px">✏️</button>
+    <button onclick="modifierMembre('${membre.id}', '${membre.nom}', '${membre.role || ''}', '${membre.specialite || ''}')" style="background:none;border:1px solid #ffffff20;color:#6b7280;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;margin-left:6px">✏️</button>
+    <button onclick="modifierKm('${membre.id}', ${membre.km_mois})" style="background:none;border:1px solid #ffffff20;color:#6b7280;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;margin-left:4px">🚴</button>
     <button onclick="modifierPoints('${membre.id}', ${membre.points})" style="background:none;border:1px solid #e8ff4740;color:#e8ff47;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;margin-left:4px">★</button>
     <button onclick="uploaderPhoto('${membre.id}')" style="background:none;border:1px solid #4f9eff40;color:#4f9eff;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;margin-left:4px">📷</button>
     <button onclick="supprimerMembre('${membre.id}')" style="background:none;border:1px solid #ff6b3540;color:#ff6b35;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;margin-left:4px">🗑️</button>
@@ -498,4 +499,29 @@ function uploaderPhoto(membreId) {
     chargerMembres()
   }
   input.click()
+}
+
+async function modifierMembre(id, nom, role, specialite) {
+  const nouveauNom = prompt('Nom :', nom)
+  if (nouveauNom === null) return
+
+  const nouveauRole = prompt('Rôle :', role)
+  if (nouveauRole === null) return
+
+  const nouvelleSpecialite = prompt('Spécialité :', specialite)
+  if (nouvelleSpecialite === null) return
+
+  const { error } = await db
+    .from('membres')
+    .update({
+      nom: nouveauNom,
+      role: nouveauRole,
+      specialite: nouvelleSpecialite
+    })
+    .eq('id', id)
+
+  if (error) { console.error(error); return }
+  chargerMembres()
+  chargerClassement()
+  chargerClassementPoints()
 }
