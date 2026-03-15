@@ -404,9 +404,21 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
         </div>
       </div>
       <div class="stats-grid">
-        <div class="stat-card"><div class="stat-label">Total saison</div><div class="stat-value">12 480</div><div class="stat-sub">km parcourus</div></div>
-        <div class="stat-card orange"><div class="stat-label">Dénivelé total</div><div class="stat-value">84 200</div><div class="stat-sub">mètres</div></div>
-        <div class="stat-card blue"><div class="stat-label">Sorties enregistrées</div><div class="stat-value">38</div><div class="stat-sub">cette saison</div></div>
+        <div class="stat-card">
+          <div class="stat-label">Total saison</div>
+          <div class="stat-value" id="stat-km-parcours">—</div>
+          <div class="stat-sub">km parcourus</div>
+        </div>
+        <div class="stat-card orange">
+          <div class="stat-label">Dénivelé total</div>
+          <div class="stat-value" id="stat-denivele">—</div>
+          <div class="stat-sub">mètres</div>
+        </div>
+        <div class="stat-card blue">
+          <div class="stat-label">Sorties enregistrées</div>
+          <div class="stat-value" id="stat-sorties">—</div>
+          <div class="stat-sub">cette saison</div>
+        </div>
       </div>
       <div class="card">
         <div class="card-title">Parcours récents</div>

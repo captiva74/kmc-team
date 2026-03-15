@@ -135,6 +135,14 @@ async function chargerParcours() {
   const liste = document.querySelector('#page-parcours .card')
   liste.innerHTML = '<div class="card-title">Parcours récents</div>'
 
+  const totalKmParcours = data.reduce((sum, p) => sum + (parseFloat(p.distance_km) || 0), 0)
+  const totalDenivele = data.reduce((sum, p) => sum + (parseInt(p.denivele_m) || 0), 0)
+  const totalSorties = data.length
+
+  document.getElementById('stat-km-parcours').textContent = totalKmParcours.toLocaleString()
+  document.getElementById('stat-denivele').textContent = totalDenivele.toLocaleString()
+  document.getElementById('stat-sorties').textContent = totalSorties
+
   const icones = ['🏔','🚴','⚡','🌄','🏁']
   const couleurs = ['#e8ff4718','#ff6b3518','#4f9eff18','#22d3a018','#9ca3af18']
 
