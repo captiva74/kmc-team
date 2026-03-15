@@ -669,22 +669,34 @@ async function synchroniserKmMembres() {
     return
   }
 
-  const debut = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
-  const debutTimestamp = Math.floor(debut.getTime() / 1000)
+  let page = 1
+  let toutesActivites = []
+  let continuer = true
 
-  const response = await fetch(`https://www.strava.com/api/v3/clubs/940123/activities?per_page=100`, {
-    headers: { 'Authorization': `Bearer ${token}` }
-  })
+  while (continuer) {
+    const response = await fetch(`https://www.strava.com/api/v3/clubs/940123/activities?per_page=100&page=${page}`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
 
-  if (!response.ok) {
-    alert('Erreur Strava — vérifiez votre connexion')
-    return
+    if (!response.ok) {
+      alert('Erreur Strava — vérifiez votre connexion')
+      return
+    }
+
+    const activites = await response.json()
+
+    if (activites.length === 0) {
+      continuer = false
+    } else {
+      toutesActivites = toutesActivites.concat(activites)
+      page++
+    }
+
+    if (activites.length < 100) continuer = false
   }
 
-  const activites = await response.json()
-
   const kmParMembre = {}
-  for (const activite of activites) {
+  for (const activite of toutesActivites) {
     if (activite.type !== 'Ride') continue
     const nom = `${activite.athlete.firstname} ${activite.athlete.lastname}`
     if (!kmParMembre[nom]) kmParMembre[nom] = 0
@@ -708,7 +720,7 @@ async function synchroniserKmMembres() {
     mis_a_jour++
   }
 
-  alert(`${mis_a_jour} membres mis à jour depuis Strava !`)
+  alert(`${mis_a_jour} membres mis à jour depuis Strava ! (${toutesActivites.length} activités analysées)`)
   chargerMembres()
   chargerClassement()
   chargerDashboard()
