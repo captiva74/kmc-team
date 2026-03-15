@@ -725,43 +725,42 @@ async function afficherStatsStrava() {
   const token = localStorage.getItem('strava_token')
   if (!token) return
 
-  const athlete = JSON.parse(localStorage.getItem('strava_athlete') || '{}')
-
-  const response = await fetch(`https://www.strava.com/api/v3/athletes/${athlete.id}/stats`, {
+  const response = await fetch('https://www.strava.com/api/v3/clubs/940123/activities?per_page=100', {
     headers: { 'Authorization': `Bearer ${token}` }
   })
 
   if (!response.ok) return
 
-  const stats = await response.json()
+  const activites = await response.json()
 
-  const kmMois = Math.round(stats.recent_ride_totals.distance / 1000)
-  const denivele = Math.round(stats.recent_ride_totals.elevation_gain)
-  const sorties = stats.recent_ride_totals.count
-  const kmTotal = Math.round(stats.all_ride_totals.distance / 1000)
+  const rides = activites.filter(a => a.type === 'Ride')
+  const totalKm = Math.round(rides.reduce((sum, a) => sum + a.distance / 1000, 0))
+  const totalDenivele = Math.round(rides.reduce((sum, a) => sum + a.total_elevation_gain, 0))
+  const totalSorties = rides.length
+  const membres = new Set(rides.map(a => `${a.athlete.firstname} ${a.athlete.lastname}`)).size
 
   document.getElementById('strava-stats').innerHTML = `
     <div style="background:#151820;border:1px solid #fc4c0240;border-radius:12px;padding:1rem;margin-bottom:1.5rem">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
         <span style="color:#fc4c02;font-size:16px">🚴</span>
-        <span style="font-weight:600;font-size:14px">Mes stats Strava — 4 dernières semaines</span>
+        <span style="font-weight:600;font-size:14px">Stats club KMC — 100 dernières activités</span>
       </div>
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
         <div style="text-align:center">
-          <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:#fc4c02">${kmMois}</div>
-          <div style="font-size:11px;color:#6b7280">km</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:#fc4c02">${totalKm.toLocaleString()}</div>
+          <div style="font-size:11px;color:#6b7280">km total</div>
         </div>
         <div style="text-align:center">
-          <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:#fc4c02">${denivele}</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:#fc4c02">${totalDenivele.toLocaleString()}</div>
           <div style="font-size:11px;color:#6b7280">m dénivelé</div>
         </div>
         <div style="text-align:center">
-          <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:#fc4c02">${sorties}</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:#fc4c02">${totalSorties}</div>
           <div style="font-size:11px;color:#6b7280">sorties</div>
         </div>
         <div style="text-align:center">
-          <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:#fc4c02">${kmTotal.toLocaleString()}</div>
-          <div style="font-size:11px;color:#6b7280">km total</div>
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:#fc4c02">${membres}</div>
+          <div style="font-size:11px;color:#6b7280">membres actifs</div>
         </div>
       </div>
     </div>
