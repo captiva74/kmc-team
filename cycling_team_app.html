@@ -1,0 +1,407 @@
+
+<!DOCTYPE html>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d0f14;
+  --surface:#151820;
+  --surface2:#1c2030;
+  --accent:#e8ff47;
+  --accent2:#ff6b35;
+  --text:#f0f2f8;
+  --muted:#6b7280;
+  --border:#ffffff12;
+  --radius:12px;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* Layout */
+.app{display:flex;min-height:100vh}
+.sidebar{width:220px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:1.5rem 1rem;flex-shrink:0}
+.main{flex:1;overflow-y:auto;padding:2rem}
+
+/* Sidebar */
+.logo{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:2px;color:var(--accent);margin-bottom:2rem;padding:0 0.5rem}
+.logo span{color:var(--muted);font-size:14px;display:block;font-family:'DM Sans',sans-serif;letter-spacing:0;font-weight:300;margin-top:2px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:400;color:var(--muted);transition:all 0.2s;margin-bottom:4px;border:none;background:none;width:100%;text-align:left}
+.nav-item:hover{background:var(--surface2);color:var(--text)}
+.nav-item.active{background:var(--accent);color:#0d0f14;font-weight:600}
+.nav-icon{font-size:16px;width:20px;text-align:center}
+
+/* Header */
+.page-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem}
+.page-title{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:2px;color:var(--text)}
+.page-title span{color:var(--accent)}
+.btn{background:var(--accent);color:#0d0f14;border:none;padding:9px 18px;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:600;font-size:13px;cursor:pointer;transition:opacity 0.2s}
+.btn:hover{opacity:0.85}
+.btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border);padding:9px 18px;border-radius:8px;font-family:'DM Sans',sans-serif;font-weight:500;font-size:13px;cursor:pointer}
+
+/* Stat cards */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:2rem}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--accent)}
+.stat-card.orange::before{background:var(--accent2)}
+.stat-card.blue::before{background:#4f9eff}
+.stat-card.green::before{background:#22d3a0}
+.stat-label{font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.stat-value{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:1px;color:var(--text);line-height:1}
+.stat-sub{font-size:12px;color:var(--muted);margin-top:6px}
+
+/* Cards */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:1.5rem}
+.card-title{font-weight:600;font-size:15px;margin-bottom:1rem;color:var(--text)}
+
+/* Grid 2 col */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+
+/* Members */
+.member-list{display:flex;flex-direction:column;gap:10px}
+.member-row{display:flex;align-items:center;gap:12px;padding:10px;border-radius:8px;background:var(--surface2);cursor:pointer;transition:background 0.2s}
+.member-row:hover{background:#1f2535}
+.avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0}
+.member-info{flex:1}
+.member-name{font-weight:500;font-size:14px}
+.member-role{font-size:12px;color:var(--muted);margin-top:2px}
+.member-stat{text-align:right}
+.member-km{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--accent)}
+.member-km-label{font-size:11px;color:var(--muted)}
+.rank-badge{width:22px;height:22px;border-radius:50%;background:var(--accent);color:#0d0f14;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.rank-badge.silver{background:#9ca3af;color:#0d0f14}
+.rank-badge.bronze{background:#cd7c2f;color:#fff}
+.rank-badge.other{background:var(--surface);color:var(--muted);border:1px solid var(--border)}
+
+/* Calendar */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.cal-header{font-size:11px;font-weight:600;color:var(--muted);text-align:center;padding:4px;text-transform:uppercase}
+.cal-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:6px;font-size:13px;color:var(--muted);cursor:pointer;transition:background 0.15s;position:relative}
+.cal-day:hover{background:var(--surface2);color:var(--text)}
+.cal-day.today{background:var(--accent);color:#0d0f14;font-weight:700}
+.cal-day.has-event::after{content:'';position:absolute;bottom:4px;width:4px;height:4px;border-radius:50%;background:var(--accent2)}
+.cal-day.has-event.today::after{background:#0d0f14}
+.cal-day.has-event2::after{background:#4f9eff}
+.cal-day.active-day{background:var(--surface2);color:var(--text)}
+
+/* Events */
+.event-list{display:flex;flex-direction:column;gap:8px}
+.event-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;background:var(--surface2);border-left:3px solid var(--accent)}
+.event-item.race{border-left-color:var(--accent2)}
+.event-item.training{border-left-color:#4f9eff}
+.event-date{font-family:'Bebas Neue',sans-serif;font-size:22px;line-height:1;color:var(--text);min-width:30px}
+.event-info{flex:1}
+.event-name{font-size:13px;font-weight:500}
+.event-detail{font-size:11px;color:var(--muted);margin-top:2px}
+.event-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:0.5px}
+.badge-course{background:#ff6b3520;color:var(--accent2)}
+.badge-train{background:#4f9eff20;color:#4f9eff}
+.badge-sortie{background:var(--accent)20;color:var(--accent)}
+
+/* GPS / Distances */
+.route-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.route-item:last-child{border-bottom:none}
+.route-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.route-data{flex:1}
+.route-name{font-size:14px;font-weight:500}
+.route-meta{font-size:12px;color:var(--muted);margin-top:2px}
+.route-km{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--accent)}
+.route-unit{font-size:11px;color:var(--muted)}
+
+/* Bar chart */
+.bar-chart{display:flex;align-items:flex-end;gap:6px;height:100px;margin-top:1rem}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bar{width:100%;border-radius:4px 4px 0 0;background:var(--accent);opacity:0.7;transition:opacity 0.2s;min-height:4px}
+.bar:hover{opacity:1}
+.bar.accent2{background:var(--accent2)}
+.bar-label{font-size:10px;color:var(--muted);margin-top:4px}
+
+/* Tabs */
+.tabs{display:flex;gap:4px;margin-bottom:1.5rem;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:4px}
+.tab{flex:1;padding:8px;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;text-align:center;color:var(--muted);border:none;background:none;transition:all 0.2s}
+.tab.active{background:var(--accent);color:#0d0f14;font-weight:700}
+
+/* Input */
+.form-row{display:flex;gap:10px;margin-bottom:1rem}
+.input{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text);font-family:'DM Sans',sans-serif;flex:1}
+.input:focus{outline:none;border-color:var(--accent)}
+
+/* Responsive */
+@media(max-width:700px){
+  .sidebar{display:none}
+  .grid2{grid-template-columns:1fr}
+}
+
+/* Animations */
+.page-section{animation:fadeUp 0.3s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+</style>
+
+<div class="app">
+  <div class="sidebar">
+    <div class="logo">VELO<br><span>Team Manager</span></div>
+    <button class="nav-item active" onclick="showPage('dashboard')"><span class="nav-icon">◈</span>Dashboard</button>
+    <button class="nav-item" onclick="showPage('membres')"><span class="nav-icon">◎</span>Membres</button>
+    <button class="nav-item" onclick="showPage('calendrier')"><span class="nav-icon">▦</span>Calendrier</button>
+    <button class="nav-item" onclick="showPage('classement')"><span class="nav-icon">▲</span>Classement</button>
+    <button class="nav-item" onclick="showPage('parcours')"><span class="nav-icon">⊕</span>Parcours GPS</button>
+  </div>
+
+  <div class="main" id="main-content">
+    <!-- Dashboard -->
+    <div id="page-dashboard" class="page-section">
+      <div class="page-header">
+        <div class="page-title">TABLEAU DE <span>BORD</span></div>
+        <button class="btn">+ Nouvelle activité</button>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Km ce mois</div>
+          <div class="stat-value">4 820</div>
+          <div class="stat-sub">+12% vs mois dernier</div>
+        </div>
+        <div class="stat-card orange">
+          <div class="stat-label">Courses à venir</div>
+          <div class="stat-value">3</div>
+          <div class="stat-sub">Prochaine dans 8 jours</div>
+        </div>
+        <div class="stat-card blue">
+          <div class="stat-label">Membres actifs</div>
+          <div class="stat-value">9</div>
+          <div class="stat-sub">2 nouveaux ce mois</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-label">Entraînements</div>
+          <div class="stat-value">24</div>
+          <div class="stat-sub">Cette saison</div>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <div class="card-title">Activité hebdomadaire — km</div>
+          <div class="bar-chart">
+            <div class="bar-col"><div class="bar" style="height:45%"></div><div class="bar-label">L</div></div>
+            <div class="bar-col"><div class="bar" style="height:70%"></div><div class="bar-label">M</div></div>
+            <div class="bar-col"><div class="bar" style="height:30%"></div><div class="bar-label">Me</div></div>
+            <div class="bar-col"><div class="bar" style="height:90%"></div><div class="bar-label">J</div></div>
+            <div class="bar-col"><div class="bar accent2" style="height:100%"></div><div class="bar-label">V</div></div>
+            <div class="bar-col"><div class="bar" style="height:55%"></div><div class="bar-label">S</div></div>
+            <div class="bar-col"><div class="bar" style="height:20%"></div><div class="bar-label">D</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Prochains événements</div>
+          <div class="event-list">
+            <div class="event-item race">
+              <div class="event-date">23</div>
+              <div class="event-info"><div class="event-name">Grand Prix de Blida</div><div class="event-detail">Route — 120 km</div></div>
+              <span class="event-badge badge-course">Course</span>
+            </div>
+            <div class="event-item training">
+              <div class="event-date">18</div>
+              <div class="event-info"><div class="event-name">Sortie col de Chréa</div><div class="event-detail">Montagne — 65 km</div></div>
+              <span class="event-badge badge-train">Entraîn.</span>
+            </div>
+            <div class="event-item">
+              <div class="event-date">17</div>
+              <div class="event-info"><div class="event-name">Intervalle endurance</div><div class="event-detail">Piste — 40 km</div></div>
+              <span class="event-badge badge-sortie">Sortie</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Membres -->
+    <div id="page-membres" class="page-section" style="display:none">
+      <div class="page-header">
+        <div class="page-title">LES <span>MEMBRES</span></div>
+        <button class="btn" onclick="addMember()">+ Ajouter</button>
+      </div>
+      <div class="card">
+        <div class="member-list" id="member-list">
+          <div class="member-row"><div class="avatar" style="background:#e8ff4720;color:var(--accent)">KA</div><div class="member-info"><div class="member-name">Karim Amrani</div><div class="member-role">Capitaine · Sprinteur</div></div><div class="member-stat"><div class="member-km">1 240</div><div class="member-km-label">km / mois</div></div><div class="rank-badge">1</div></div>
+          <div class="member-row"><div class="avatar" style="background:#4f9eff20;color:#4f9eff">SB</div><div class="member-info"><div class="member-name">Sofiane Benali</div><div class="member-role">Grimpeur · Équipier</div></div><div class="member-stat"><div class="member-km">980</div><div class="member-km-label">km / mois</div></div><div class="rank-badge silver">2</div></div>
+          <div class="member-row"><div class="avatar" style="background:#ff6b3520;color:var(--accent2)">YM</div><div class="member-info"><div class="member-name">Younes Meziane</div><div class="member-role">Rouleur · Équipier</div></div><div class="member-stat"><div class="member-km">870</div><div class="member-km-label">km / mois</div></div><div class="rank-badge bronze">3</div></div>
+          <div class="member-row"><div class="avatar" style="background:#22d3a020;color:#22d3a0">RH</div><div class="member-info"><div class="member-name">Rachid Hamdi</div><div class="member-role">Équipier · Polyvalent</div></div><div class="member-stat"><div class="member-km">740</div><div class="member-km-label">km / mois</div></div><div class="rank-badge other">4</div></div>
+          <div class="member-row"><div class="avatar" style="background:#9ca3af20;color:#9ca3af">NA</div><div class="member-info"><div class="member-name">Nassim Aït</div><div class="member-role">Stagiaire · Grimpeur</div></div><div class="member-stat"><div class="member-km">610</div><div class="member-km-label">km / mois</div></div><div class="rank-badge other">5</div></div>
+        </div>
+        <div id="add-member-form" style="display:none;margin-top:1rem;border-top:1px solid var(--border);padding-top:1rem">
+          <div class="form-row">
+            <input class="input" id="new-name" placeholder="Nom complet" />
+            <input class="input" id="new-role" placeholder="Rôle (ex: Grimpeur)" />
+          </div>
+          <div class="form-row">
+            <input class="input" id="new-km" placeholder="Km / mois" type="number" />s
+            <button class="btn" onclick="saveMember()">Enregistrer</button>
+            <button class="btn-ghost" onclick="cancelMember()">Annuler</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Calendrier -->
+    <div id="page-calendrier" class="page-section" style="display:none">
+      <div class="page-header">
+        <div class="page-title">MARS <span>2026</span></div>
+        <button class="btn" onclick="sendPrompt('Je veux planifier une sortie ou une course pour mon équipe en mars 2026, aide-moi à organiser ça.')">+ Planifier ↗</button>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <div class="cal-grid">
+            <div class="cal-header">L</div><div class="cal-header">M</div><div class="cal-header">Me</div><div class="cal-header">J</div><div class="cal-header">V</div><div class="cal-header">S</div><div class="cal-header">D</div>
+            <div></div><div></div><div></div><div></div><div></div><div class="cal-day">1</div><div class="cal-day">2</div>
+            <div class="cal-day">3</div><div class="cal-day">4</div><div class="cal-day has-event2 active-day">5</div><div class="cal-day">6</div><div class="cal-day">7</div><div class="cal-day has-event active-day">8</div><div class="cal-day">9</div>
+            <div class="cal-day">10</div><div class="cal-day">11</div><div class="cal-day">12</div><div class="cal-day">13</div><div class="cal-day">14</div><div class="cal-day today">15</div><div class="cal-day">16</div>
+            <div class="cal-day">17</div><div class="cal-day has-event2">18</div><div class="cal-day">19</div><div class="cal-day">20</div><div class="cal-day">21</div><div class="cal-day has-event">22</div><div class="cal-day has-event">23</div>
+            <div class="cal-day">24</div><div class="cal-day">25</div><div class="cal-day">26</div><div class="cal-day">27</div><div class="cal-day">28</div><div class="cal-day">29</div><div class="cal-day">30</div>
+            <div class="cal-day">31</div>
+          </div>
+          <div style="display:flex;gap:12px;margin-top:1rem;font-size:11px;color:var(--muted)">
+            <span style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:50%;background:var(--accent2)"></span>Course</span>
+            <span style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:50%;background:#4f9eff"></span>Entraînement</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Événements du mois</div>
+          <div class="event-list" id="event-list">
+            <div class="event-item training">
+              <div class="event-date">05</div>
+              <div class="event-info"><div class="event-name">Sortie endurance</div><div class="event-detail">Piste Blida — 80 km · 7h00</div></div>
+              <span class="event-badge badge-train">Entraîn.</span>
+            </div>
+            <div class="event-item race">
+              <div class="event-date">08</div>
+              <div class="event-info"><div class="event-name">Championnat régional</div><div class="event-detail">Route Médéa — 95 km · 9h00</div></div>
+              <span class="event-badge badge-course">Course</span>
+            </div>
+            <div class="event-item training">
+              <div class="event-date">18</div>
+              <div class="event-info"><div class="event-name">Montée col de Chréa</div><div class="event-detail">Montagne — 65 km · 8h30</div></div>
+              <span class="event-badge badge-train">Entraîn.</span>
+            </div>
+            <div class="event-item race">
+              <div class="event-date">23</div>
+              <div class="event-info"><div class="event-name">Grand Prix de Blida</div><div class="event-detail">Route — 120 km · 9h00</div></div>
+              <span class="event-badge badge-course">Course</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Classement -->
+    <div id="page-classement" class="page-section" style="display:none">
+      <div class="page-header">
+        <div class="page-title">CLASSE<span>MENT</span></div>
+      </div>
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab(this,'tab-km')">Km parcourus</button>
+        <button class="tab" onclick="switchTab(this,'tab-pts')">Points course</button>
+        <button class="tab" onclick="switchTab(this,'tab-perf')">Performance</button>
+      </div>
+      <div id="tab-km">
+        <div class="card">
+          <div class="card-title">Classement — Kilomètres parcourus ce mois</div>
+          <div class="member-list">
+            <div class="member-row"><div class="rank-badge" style="width:28px;height:28px;font-size:13px">🥇</div><div class="member-info"><div class="member-name">Karim Amrani</div><div class="member-role">Sprinteur</div></div><div style="flex:1;margin:0 12px"><div style="height:8px;background:var(--surface2);border-radius:4px;overflow:hidden"><div style="height:100%;width:100%;background:var(--accent);border-radius:4px"></div></div></div><div class="member-km">1 240 km</div></div>
+            <div class="member-row"><div class="rank-badge silver" style="width:28px;height:28px;font-size:13px">🥈</div><div class="member-info"><div class="member-name">Sofiane Benali</div><div class="member-role">Grimpeur</div></div><div style="flex:1;margin:0 12px"><div style="height:8px;background:var(--surface2);border-radius:4px;overflow:hidden"><div style="height:100%;width:79%;background:#9ca3af;border-radius:4px"></div></div></div><div class="member-km">980 km</div></div>
+            <div class="member-row"><div class="rank-badge bronze" style="width:28px;height:28px;font-size:13px">🥉</div><div class="member-info"><div class="member-name">Younes Meziane</div><div class="member-role">Rouleur</div></div><div style="flex:1;margin:0 12px"><div style="height:8px;background:var(--surface2);border-radius:4px;overflow:hidden"><div style="height:100%;width:70%;background:#cd7c2f;border-radius:4px"></div></div></div><div class="member-km">870 km</div></div>
+            <div class="member-row"><div class="rank-badge other" style="width:28px;height:28px;font-size:13px">4</div><div class="member-info"><div class="member-name">Rachid Hamdi</div><div class="member-role">Polyvalent</div></div><div style="flex:1;margin:0 12px"><div style="height:8px;background:var(--surface2);border-radius:4px;overflow:hidden"><div style="height:100%;width:60%;background:#4f9eff;border-radius:4px"></div></div></div><div class="member-km">740 km</div></div>
+            <div class="member-row"><div class="rank-badge other" style="width:28px;height:28px;font-size:13px">5</div><div class="member-info"><div class="member-name">Nassim Aït</div><div class="member-role">Stagiaire</div></div><div style="flex:1;margin:0 12px"><div style="height:8px;background:var(--surface2);border-radius:4px;overflow:hidden"><div style="height:100%;width:49%;background:#22d3a0;border-radius:4px"></div></div></div><div class="member-km">610 km</div></div>
+          </div>
+        </div>
+      </div>
+      <div id="tab-pts" style="display:none">
+        <div class="card"><div class="card-title">Points de course — Saison 2026</div>
+          <div class="member-list">
+            <div class="member-row"><div class="rank-badge">1</div><div class="member-info"><div class="member-name">Karim Amrani</div></div><div class="member-km">87 pts</div></div>
+            <div class="member-row"><div class="rank-badge silver">2</div><div class="member-info"><div class="member-name">Younes Meziane</div></div><div class="member-km">64 pts</div></div>
+            <div class="member-row"><div class="rank-badge bronze">3</div><div class="member-info"><div class="member-name">Sofiane Benali</div></div><div class="member-km">51 pts</div></div>
+          </div>
+        </div>
+      </div>
+      <div id="tab-perf" style="display:none">
+        <div class="card"><div class="card-title">Score de performance global</div>
+          <div style="text-align:center;padding:2rem;color:var(--muted)">Connectez un appareil GPS pour calculer les scores de performance automatiquement.<br><br><button class="btn" onclick="sendPrompt('Comment calculer les scores de performance pour mon équipe de cyclisme ?')">Comment faire ↗</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Parcours GPS -->
+    <div id="page-parcours" class="page-section" style="display:none">
+      <div class="page-header">
+        <div class="page-title">PARCOURS <span>GPS</span></div>
+        <button class="btn">+ Importer GPX</button>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-label">Total saison</div><div class="stat-value">12 480</div><div class="stat-sub">km parcourus</div></div>
+        <div class="stat-card orange"><div class="stat-label">Dénivelé total</div><div class="stat-value">84 200</div><div class="stat-sub">mètres</div></div>
+        <div class="stat-card blue"><div class="stat-label">Sorties enregistrées</div><div class="stat-value">38</div><div class="stat-sub">cette saison</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Parcours récents</div>
+        <div class="route-item"><div class="route-icon" style="background:#e8ff4718">🏔</div><div class="route-data"><div class="route-name">Col de Chréa</div><div class="route-meta">14 mars · ↑ 1 240m · 2h45</div></div><div><div class="route-km">65</div><div class="route-unit">km</div></div></div>
+        <div class="route-item"><div class="route-icon" style="background:#ff6b3518">🚴</div><div class="route-data"><div class="route-name">Circuit de Blida</div><div class="route-meta">10 mars · ↑ 320m · 1h55</div></div><div><div class="route-km">48</div><div class="route-unit">km</div></div></div>
+        <div class="route-item"><div class="route-icon" style="background:#4f9eff18">⚡</div><div class="route-data"><div class="route-name">Intervalles piste</div><div class="route-meta">7 mars · ↑ 80m · 1h10</div></div><div><div class="route-km">32</div><div class="route-unit">km</div></div></div>
+        <div class="route-item"><div class="route-icon" style="background:#22d3a018">🌄</div><div class="route-data"><div class="route-name">Sortie Médéa - Blida</div><div class="route-meta">5 mars · ↑ 640m · 3h20</div></div><div><div class="route-km">92</div><div class="route-unit">km</div></div></div>
+        <div style="text-align:center;margin-top:1rem"><button class="btn-ghost" onclick="sendPrompt('Aide-moi à analyser les données GPS de mes parcours de cyclisme.')">Analyser mes données GPS ↗</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showPage(name) {
+  document.querySelectorAll('[id^="page-"]').forEach(p => p.style.display = 'none');
+  document.getElementById('page-' + name).style.display = 'block';
+  document.getElementById('page-' + name).style.animation = 'none';
+  requestAnimationFrame(() => { document.getElementById('page-' + name).style.animation = 'fadeUp 0.3s ease both'; });
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+}
+function switchTab(el, tabId) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  ['tab-km','tab-pts','tab-perf'].forEach(id => document.getElementById(id).style.display = 'none');
+  document.getElementById(tabId).style.display = 'block';
+}
+let addingMember = false;
+function addMember() {
+  document.getElementById('add-member-form').style.display = 'block';
+}
+function cancelMember() {
+  document.getElementById('add-member-form').style.display = 'none';
+}
+async function saveMember() {
+  const name = document.getElementById('new-name').value.trim()
+  const role = document.getElementById('new-role').value.trim()
+  const km = document.getElementById('new-km').value.trim()
+
+  if (!name) return
+
+  const { error } = await db
+    .from('membres')
+    .insert([{
+      nom: name,
+      role: role || 'Equipier',
+      km_mois: parseInt(km) || 0
+    }])
+
+  if (error) {
+    console.error('Erreur:', error)
+    return
+  }
+
+  document.getElementById('new-name').value = ''
+  document.getElementById('new-role').value = ''
+  document.getElementById('new-km').value = ''
+  document.getElementById('add-member-form').style.display = 'none'
+
+  chargerMembres()
+}
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+</body>
+</html>
