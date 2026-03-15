@@ -248,6 +248,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
         <div class="page-title">LES <span>MEMBRES</span></div>
         <button class="btn" onclick="addMember()">+ Ajouter</button>
       </div>
+      <input id="recherche-membre" class="input" placeholder="Rechercher un membre..." 
+        oninput="filtrerMembres(this.value)" 
+        style="margin-bottom:1rem;width:100%" />
       <div class="card">
         <div class="member-list" id="member-list">
           <div class="member-row"><div class="avatar" style="background:#e8ff4720;color:var(--accent)">KA</div><div class="member-info"><div class="member-name">Karim Amrani</div><div class="member-role">Capitaine · Sprinteur</div></div><div class="member-stat"><div class="member-km">1 240</div><div class="member-km-label">km / mois</div></div><div class="rank-badge">1</div></div>

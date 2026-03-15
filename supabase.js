@@ -447,3 +447,11 @@ async function afficherProfil() {
     document.getElementById('user-email').textContent = email
   }
 }
+
+function filtrerMembres(texte) {
+  const rows = document.querySelectorAll('#member-list .member-row')
+  rows.forEach(row => {
+    const nom = row.querySelector('.member-name').textContent.toLowerCase()
+    row.style.display = nom.includes(texte.toLowerCase()) ? 'flex' : 'none'
+  })
+}
