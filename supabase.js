@@ -6,6 +6,9 @@ const STRAVA_REDIRECT_URI = 'https://kmc-team.vercel.app'
 
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
 
+let pageMembres = 1
+const parPage = 5
+
 async function chargerMembres() {
   const { data, error } = await db
     .from('membres')
@@ -14,16 +17,30 @@ async function chargerMembres() {
 
   if (error) { console.error('Erreur:', error); return }
 
+  window.tousLesMembres = data
+  afficherPageMembres(1)
+}
+
+function afficherPageMembres(page) {
+  pageMembres = page
+  const data = window.tousLesMembres || []
+  const total = data.length
+  const totalPages = Math.ceil(total / parPage)
+  const debut = (page - 1) * parPage
+  const fin = debut + parPage
+  const pageDonnees = data.slice(debut, fin)
+
   const liste = document.getElementById('member-list')
   liste.innerHTML = ''
 
   const couleurs = ['#e8ff47','#4f9eff','#ff6b35','#22d3a0','#9ca3af']
   const badges = ['','silver','bronze','other','other','other']
 
-  data.forEach((membre, index) => {
+  pageDonnees.forEach((membre, index) => {
+    const indexGlobal = debut + index
     const initiales = membre.nom.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase()
-    const couleur = couleurs[index % couleurs.length]
-    const badge = badges[index] || 'other'
+    const couleur = couleurs[indexGlobal % couleurs.length]
+    const badge = badges[indexGlobal] || 'other'
 
     const div = document.createElement('div')
     div.className = 'member-row'
@@ -39,7 +56,7 @@ async function chargerMembres() {
         <div class="member-km">${membre.km_mois}</div>
         <div class="member-km-label">km / mois</div>
     </div>
-    <div class="rank-badge ${badge}">${index + 1}</div>
+    <div class="rank-badge ${badge}">${indexGlobal + 1}</div>
     <button onclick="modifierMembre('${membre.id}', '${membre.nom}', '${membre.role || ''}', '${membre.specialite || ''}')" style="background:none;border:1px solid #ffffff20;color:#6b7280;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;margin-left:6px">✏️</button>
     <button onclick="modifierKm('${membre.id}', ${membre.km_mois})" style="background:none;border:1px solid #ffffff20;color:#6b7280;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;margin-left:4px">🚴</button>
     <button onclick="modifierPoints('${membre.id}', ${membre.points})" style="background:none;border:1px solid #e8ff4740;color:#e8ff47;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;margin-left:4px">★</button>
@@ -48,9 +65,58 @@ async function chargerMembres() {
     `
     liste.appendChild(div)
   })
+
+  const pagination = document.getElementById('pagination-membres')
+  pagination.innerHTML = ''
+
+  if (totalPages <= 1) return
+
+  const prev = document.createElement('button')
+  prev.className = 'btn-ghost'
+  prev.textContent = '← Précédent'
+  prev.style.cssText = 'font-size:12px;padding:6px 12px;margin-right:8px'
+  prev.disabled = page === 1
+  prev.style.opacity = page === 1 ? '0.3' : '1'
+  prev.onclick = () => afficherPageMembres(page - 1)
+  pagination.appendChild(prev)
+
+  for (let i = 1; i <= totalPages; i++) {
+    const btn = document.createElement('button')
+    btn.textContent = i
+    btn.style.cssText = `font-size:12px;padding:6px 10px;margin-right:4px;border-radius:6px;border:1px solid ${i === page ? 'var(--accent)' : '#ffffff20'};background:${i === page ? 'var(--accent)' : 'none'};color:${i === page ? '#0d0f14' : '#6b7280'};cursor:pointer`
+    btn.onclick = () => afficherPageMembres(i)
+    pagination.appendChild(btn)
+  }
+
+  const next = document.createElement('button')
+  next.className = 'btn-ghost'
+  next.textContent = 'Suivant →'
+  next.style.cssText = 'font-size:12px;padding:6px 12px;margin-left:4px'
+  next.disabled = page === totalPages
+  next.style.opacity = page === totalPages ? '0.3' : '1'
+  next.onclick = () => afficherPageMembres(page + 1)
+  pagination.appendChild(next)
+
+  const info = document.createElement('span')
+  info.style.cssText = 'font-size:12px;color:#6b7280;margin-left:12px'
+  info.textContent = `${total} membres au total`
+  pagination.appendChild(info)
 }
 
-chargerMembres()
+function filtrerMembres(texte) {
+  if (!window.tousLesMembres) return
+  if (texte === '') {
+    afficherPageMembres(1)
+    return
+  }
+  const filtres = window.tousLesMembres.filter(m =>
+    m.nom.toLowerCase().includes(texte.toLowerCase())
+  )
+  window.tousLesMembres = filtres
+  afficherPageMembres(1)
+  window.tousLesMembres = window.tousLesMembresOriginal
+}
+
 
 
 async function chargerEvenements() {
