@@ -1,9 +1,11 @@
 
 <!DOCTYPE html>
-<div id="login-page" style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#0d0f14">
+<div id="login-page" style="display:none;align-items:center;justify-content:center;min-height:100vh;background:#0d0f14">
   <div style="background:#151820;border:1px solid #ffffff12;border-radius:16px;padding:2.5rem;width:340px">
-    <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:2px;color:#e8ff47;margin-bottom:4px">KMC</div>
-    <div style="font-size:14px;color:#6b7280;margin-bottom:2rem">Team Manager — Connexion</div>
+    <div class="logo" style="display:flex;align-items:center;gap:10px">
+      <img src="logo.png" style="width:45px;height:45px;border-radius:50%;object-fit:cover;flex-shrink:0">
+      <div>KMC<br><span>Team Manager — Connexion</span></div>
+    </div>
     <input id="login-email" type="email" placeholder="Email" style="width:100%;background:#1c2030;border:1px solid #ffffff12;border-radius:8px;padding:10px 14px;font-size:14px;color:#f0f2f8;margin-bottom:12px;box-sizing:border-box" />
     <input id="login-password" type="password" placeholder="Mot de passe" style="width:100%;background:#1c2030;border:1px solid #ffffff12;border-radius:8px;padding:10px 14px;font-size:14px;color:#f0f2f8;margin-bottom:16px;box-sizing:border-box" />
     <button onclick="seConnecter()" style="width:100%;background:#e8ff47;color:#0d0f14;border:none;border-radius:8px;padding:11px;font-size:14px;font-weight:700;cursor:pointer">Se connecter</button>
@@ -161,23 +163,28 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 </style>
 
 <div class="app">
-  <div class="sidebar">
-    <div class="logo">KMC<br><span>Team Manager</span></div>
+  <div class="sidebar" style="display:flex;flex-direction:column;height:100vh;overflow:hidden">
+    <div class="logo" style="display:flex;align-items:center;gap:10px">
+      <img src="logo.png" style="width:45px;height:45px;border-radius:50%;object-fit:cover;flex-shrink:0">
+      <div>KMC<br><span>Team Manager</span></div>
+    </div>
     <div id="user-info" style="background:#1c2030;border-radius:8px;padding:8px 12px;margin-bottom:1rem;font-size:12px;">
       <div style="color:#6b7280;font-size:11px;margin-bottom:2px">Connecté en tant que</div>
       <div id="user-email" style="color:#e8ff47;font-weight:500;word-break:break-all"></div>
     </div>
-    <button class="nav-item active" onclick="showPage('dashboard')"><span class="nav-icon">◈</span>Dashboard</button>
-    <button class="nav-item" onclick="showPage('membres')"><span class="nav-icon">◎</span>Membres</button>
-    <button class="nav-item" onclick="showPage('calendrier')"><span class="nav-icon">▦</span>Calendrier</button>
-    <button class="nav-item" onclick="showPage('classement')"><span class="nav-icon">▲</span>Classement</button>
-    <button class="nav-item" onclick="showPage('parcours')"><span class="nav-icon">⊕</span>Parcours GPS</button>
-    <button class="nav-item" onclick="connecterStrava()" style="color:#fc4c02">
-      <span class="nav-icon">🚴</span>Connecter Strava
-    </button>
-    <button class="nav-item" onclick="seDeconnecter()" style="margin-top:auto;color:#ff6b35">
-      <span class="nav-icon">⏻</span>Déconnexion
-    </button>
+    <div style="flex:1;overflow-y:auto">
+      <button class="nav-item active" onclick="showPage('dashboard')"><span class="nav-icon">◈</span>Dashboard</button>
+      <button class="nav-item" onclick="showPage('membres')"><span class="nav-icon">◎</span>Membres</button>
+      <button class="nav-item" onclick="showPage('calendrier')"><span class="nav-icon">▦</span>Calendrier</button>
+      <button class="nav-item" onclick="showPage('classement')"><span class="nav-icon">▲</span>Classement</button>
+      <button class="nav-item" onclick="showPage('parcours')"><span class="nav-icon">⊕</span>Parcours GPS</button>
+      <button class="nav-item" onclick="connecterStrava()" style="color:#fc4c02">
+        <span class="nav-icon">🚴</span>Connecter Strava
+      </button>
+      <button class="nav-item" onclick="seDeconnecter()" style="margin-top:auto;color:#ff6b35">
+        <span class="nav-icon">⏻</span>Déconnexion
+      </button>
+    </div>
   </div>
 
   <div class="main" id="main-content">

@@ -217,8 +217,20 @@ async function verifierSession() {
     afficherProfil()
     chargerGraphique()
     afficherStatsStrava()
+
+    const urlParams = new URLSearchParams(window.location.search)
+    const stravaCode = urlParams.get('code')
+    if (stravaCode) {
+      window.history.replaceState({}, document.title, '/')
+      recupererTokenStrava(stravaCode)
+    }
+  } else {
+    document.getElementById('login-page').style.display = 'flex'
+    document.getElementById('app-page').style.display = 'none'
   }
 }
+
+verifierSession()
 
 async function seDeconnecter() {
   await db.auth.signOut()
@@ -603,13 +615,6 @@ async function synchroniserActivitesStrava(token) {
 
   chargerParcours()
   alert('Activités Strava importées !')
-}
-
-const urlParams = new URLSearchParams(window.location.search)
-const stravaCode = urlParams.get('code')
-if (stravaCode) {
-  recupererTokenStrava(stravaCode)
-  window.history.replaceState({}, document.title, '/')
 }
 
 async function importerMembresClub() {
