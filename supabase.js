@@ -661,3 +661,55 @@ async function importerMembresClub() {
   chargerClassement()
   chargerClassementPoints()
 }
+
+async function synchroniserKmMembres() {
+  const token = localStorage.getItem('strava_token')
+  if (!token) {
+    alert('Connectez d\'abord Strava dans la sidebar !')
+    return
+  }
+
+  const debut = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+  const debutTimestamp = Math.floor(debut.getTime() / 1000)
+
+  const response = await fetch(`https://www.strava.com/api/v3/clubs/940123/activities?per_page=100`, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  })
+
+  if (!response.ok) {
+    alert('Erreur Strava — vérifiez votre connexion')
+    return
+  }
+
+  const activites = await response.json()
+
+  const kmParMembre = {}
+  for (const activite of activites) {
+    if (activite.type !== 'Ride') continue
+    const nom = `${activite.athlete.firstname} ${activite.athlete.lastname}`
+    if (!kmParMembre[nom]) kmParMembre[nom] = 0
+    kmParMembre[nom] += Math.round(activite.distance / 100) / 10
+  }
+
+  let mis_a_jour = 0
+  for (const [nom, km] of Object.entries(kmParMembre)) {
+    const { data: membre } = await db
+      .from('membres')
+      .select('id')
+      .eq('nom', nom)
+
+    if (!membre || membre.length === 0) continue
+
+    await db
+      .from('membres')
+      .update({ km_mois: Math.round(km) })
+      .eq('id', membre[0].id)
+
+    mis_a_jour++
+  }
+
+  alert(`${mis_a_jour} membres mis à jour depuis Strava !`)
+  chargerMembres()
+  chargerClassement()
+  chargerDashboard()
+}
