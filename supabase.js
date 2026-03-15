@@ -1,6 +1,8 @@
 const SUPABASE_URL = 'https://soysoppzaajawpummbqt.supabase.co'
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNveXNvcHB6YWFqYXdwdW1tYnF0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1NjY2NzAsImV4cCI6MjA4OTE0MjY3MH0.4EKPpjP-A_8WgIIeLYsVM5y5MdaQNG5NBlGLXuHfRnc'
 
+const STRAVA_CLIENT_ID = '129727'
+const STRAVA_REDIRECT_URI = 'https://kmc-team.vercel.app'
 
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
 
@@ -563,4 +565,54 @@ async function chargerGraphique() {
       }
     }
   })
+}
+
+function connecterStrava() {
+  const url = `https://www.strava.com/oauth/authorize?client_id=${STRAVA_CLIENT_ID}&response_type=code&redirect_uri=${STRAVA_REDIRECT_URI}&approval_prompt=force&scope=activity:read_all`
+  window.location.href = url
+}
+
+async function recupererTokenStrava(code) {
+  const { data, error } = await db.functions.invoke('strava-auth', {
+    body: { code }
+  })
+
+  if (error) { console.error(error); return }
+
+  localStorage.setItem('strava_token', data.access_token)
+  localStorage.setItem('strava_athlete', JSON.stringify(data.athlete))
+
+  alert(`Strava connecté ! Bienvenue ${data.athlete.firstname} ${data.athlete.lastname}`)
+
+  await synchroniserActivitesStrava(data.access_token)
+}
+
+async function synchroniserActivitesStrava(token) {
+  const response = await fetch('https://www.strava.com/api/v3/athlete/activities?per_page=10', {
+    headers: { 'Authorization': `Bearer ${token}` }
+  })
+
+  const activites = await response.json()
+
+  for (const activite of activites) {
+    if (activite.type !== 'Ride') continue
+
+    await db.from('parcours').insert([{
+      nom: activite.name,
+      distance_km: Math.round(activite.distance / 100) / 10,
+      denivele_m: Math.round(activite.total_elevation_gain),
+      duree_min: Math.round(activite.moving_time / 60),
+      date_sortie: activite.start_date.split('T')[0]
+    }])
+  }
+
+  chargerParcours()
+  alert('Activités Strava importées !')
+}
+
+const urlParams = new URLSearchParams(window.location.search)
+const stravaCode = urlParams.get('code')
+if (stravaCode) {
+  recupererTokenStrava(stravaCode)
+  window.history.replaceState({}, document.title, '/')
 }
