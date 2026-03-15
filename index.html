@@ -2,12 +2,24 @@
 <!DOCTYPE html>
 <div id="login-page" style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#0d0f14">
   <div style="background:#151820;border:1px solid #ffffff12;border-radius:16px;padding:2.5rem;width:340px">
-    <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:2px;color:#e8ff47;margin-bottom:4px">VELO</div>
+    <div style="font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:2px;color:#e8ff47;margin-bottom:4px">KMC</div>
     <div style="font-size:14px;color:#6b7280;margin-bottom:2rem">Team Manager — Connexion</div>
     <input id="login-email" type="email" placeholder="Email" style="width:100%;background:#1c2030;border:1px solid #ffffff12;border-radius:8px;padding:10px 14px;font-size:14px;color:#f0f2f8;margin-bottom:12px;box-sizing:border-box" />
     <input id="login-password" type="password" placeholder="Mot de passe" style="width:100%;background:#1c2030;border:1px solid #ffffff12;border-radius:8px;padding:10px 14px;font-size:14px;color:#f0f2f8;margin-bottom:16px;box-sizing:border-box" />
     <button onclick="seConnecter()" style="width:100%;background:#e8ff47;color:#0d0f14;border:none;border-radius:8px;padding:11px;font-size:14px;font-weight:700;cursor:pointer">Se connecter</button>
     <div id="login-error" style="color:#ff6b35;font-size:13px;margin-top:12px;display:none">Email ou mot de passe incorrect.</div>
+    <div style="text-align:center;margin-top:16px;font-size:13px;color:#6b7280">
+      Pas encore de compte ? 
+      <span onclick="afficherRegister()" style="color:#e8ff47;cursor:pointer">S'inscrire</span>
+    </div>
+
+    <div id="register-form" style="display:none;margin-top:16px;border-top:1px solid #ffffff12;padding-top:16px">
+      <input id="register-email" type="email" placeholder="Email" style="width:100%;background:#1c2030;border:1px solid #ffffff12;border-radius:8px;padding:10px 14px;font-size:14px;color:#f0f2f8;margin-bottom:12px;box-sizing:border-box" />
+      <input id="register-password" type="password" placeholder="Mot de passe" style="width:100%;background:#1c2030;border:1px solid #ffffff12;border-radius:8px;padding:10px 14px;font-size:14px;color:#f0f2f8;margin-bottom:12px;box-sizing:border-box" />
+      <button onclick="sInscrire()" style="width:100%;background:#ff6b35;color:#fff;border:none;border-radius:8px;padding:11px;font-size:14px;font-weight:700;cursor:pointer">Créer le compte</button>
+      <div id="register-success" style="color:#22d3a0;font-size:13px;margin-top:12px;display:none">Compte créé ! Vérifiez votre email.</div>
+      <div id="register-error" style="color:#ff6b35;font-size:13px;margin-top:12px;display:none">Erreur lors de l'inscription.</div>
+    </div>
   </div>
 </div>
 
@@ -150,12 +162,15 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 
 <div class="app">
   <div class="sidebar">
-    <div class="logo">VELO<br><span>Team Manager</span></div>
+    <div class="logo">KMC<br><span>Team Manager</span></div>
     <button class="nav-item active" onclick="showPage('dashboard')"><span class="nav-icon">◈</span>Dashboard</button>
     <button class="nav-item" onclick="showPage('membres')"><span class="nav-icon">◎</span>Membres</button>
     <button class="nav-item" onclick="showPage('calendrier')"><span class="nav-icon">▦</span>Calendrier</button>
     <button class="nav-item" onclick="showPage('classement')"><span class="nav-icon">▲</span>Classement</button>
     <button class="nav-item" onclick="showPage('parcours')"><span class="nav-icon">⊕</span>Parcours GPS</button>
+    <button class="nav-item" onclick="seDeconnecter()" style="margin-top:auto;color:#ff6b35">
+      <span class="nav-icon">⏻</span>Déconnexion
+    </button>
   </div>
 
   <div class="main" id="main-content">

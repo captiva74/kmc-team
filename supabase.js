@@ -194,3 +194,31 @@ async function verifierSession() {
 }
 
 verifierSession()
+
+async function seDeconnecter() {
+  await db.auth.signOut()
+  document.getElementById('app-page').style.display = 'none'
+  document.getElementById('login-page').style.display = 'flex'
+}
+
+function afficherRegister() {
+  const form = document.getElementById('register-form')
+  form.style.display = form.style.display === 'none' ? 'block' : 'none'
+}
+
+async function sInscrire() {
+  const email = document.getElementById('register-email').value.trim()
+  const password = document.getElementById('register-password').value.trim()
+
+  if (!email || !password) return
+
+  const { error } = await db.auth.signUp({ email, password })
+
+  if (error) {
+    document.getElementById('register-error').style.display = 'block'
+    return
+  }
+
+  document.getElementById('register-success').style.display = 'block'
+  document.getElementById('register-error').style.display = 'none'
+}
