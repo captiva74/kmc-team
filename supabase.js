@@ -26,16 +26,18 @@ async function chargerMembres() {
     const div = document.createElement('div')
     div.className = 'member-row'
     div.innerHTML = `
-      <div class="avatar" style="background:${couleur}20;color:${couleur}">${initiales}</div>
-      <div class="member-info">
+    <div class="avatar" style="background:${couleur}20;color:${couleur}">${initiales}</div>
+    <div class="member-info">
         <div class="member-name">${membre.nom}</div>
         <div class="member-role">${membre.role || ''} · ${membre.specialite || ''}</div>
-      </div>
-      <div class="member-stat">
+    </div>
+    <div class="member-stat">
         <div class="member-km">${membre.km_mois}</div>
         <div class="member-km-label">km / mois</div>
-      </div>
-      <div class="rank-badge ${badge}">${index + 1}</div>
+    </div>
+    <div class="rank-badge ${badge}">${index + 1}</div>
+    <button onclick="modifierKm('${membre.id}', ${membre.km_mois})" style="background:none;border:1px solid #ffffff20;color:#6b7280;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;margin-left:6px">✏️</button>
+    <button onclick="supprimerMembre('${membre.id}')" style="background:none;border:1px solid #ff6b3540;color:#ff6b35;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;margin-left:4px">🗑️</button>
     `
     liste.appendChild(div)
   })
@@ -221,4 +223,31 @@ async function sInscrire() {
 
   document.getElementById('register-success').style.display = 'block'
   document.getElementById('register-error').style.display = 'none'
+}
+
+async function modifierKm(id, kmActuel) {
+  const nouveau = prompt('Nouveaux km ce mois :', kmActuel)
+  if (nouveau === null) return
+
+  const { error } = await db
+    .from('membres')
+    .update({ km_mois: parseInt(nouveau) })
+    .eq('id', id)
+
+  if (error) { console.error(error); return }
+  chargerMembres()
+  chargerClassement()
+}
+
+async function supprimerMembre(id) {
+  if (!confirm('Supprimer ce membre ?')) return
+
+  const { error } = await db
+    .from('membres')
+    .delete()
+    .eq('id', id)
+
+  if (error) { console.error(error); return }
+  chargerMembres()
+  chargerClassement()
 }
