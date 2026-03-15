@@ -251,3 +251,35 @@ async function supprimerMembre(id) {
   chargerMembres()
   chargerClassement()
 }
+
+function afficherFormulaireEvenement() {
+  const form = document.getElementById('form-evenement')
+  form.style.display = form.style.display === 'none' ? 'block' : 'none'
+}
+
+async function sauvegarderEvenement() {
+  const nom = document.getElementById('evt-nom').value.trim()
+  const type = document.getElementById('evt-type').value
+  const date = document.getElementById('evt-date').value
+  const lieu = document.getElementById('evt-lieu').value.trim()
+  const distance = document.getElementById('evt-distance').value
+
+  if (!nom || !date) {
+    alert('Le nom et la date sont obligatoires')
+    return
+  }
+
+  const { error } = await db
+    .from('evenements')
+    .insert([{ nom, type, date, lieu, distance_km: parseFloat(distance) || null }])
+
+  if (error) { console.error(error); return }
+
+  document.getElementById('evt-nom').value = ''
+  document.getElementById('evt-date').value = ''
+  document.getElementById('evt-lieu').value = ''
+  document.getElementById('evt-distance').value = ''
+  document.getElementById('form-evenement').style.display = 'none'
+
+  chargerEvenements()
+}

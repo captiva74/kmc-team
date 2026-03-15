@@ -270,7 +270,27 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
     <div id="page-calendrier" class="page-section" style="display:none">
       <div class="page-header">
         <div class="page-title">MARS <span>2026</span></div>
-        <button class="btn" onclick="sendPrompt('Je veux planifier une sortie ou une course pour mon équipe en mars 2026, aide-moi à organiser ça.')">+ Planifier ↗</button>
+        <button class="btn" onclick="afficherFormulaireEvenement()">+ Ajouter</button>
+      </div>
+      <div id="form-evenement" style="display:none;background:#151820;border:1px solid #ffffff12;border-radius:12px;padding:1.5rem;margin-bottom:1.5rem">
+        <div style="font-weight:600;font-size:15px;margin-bottom:1rem">Nouvel événement</div>
+        <div class="form-row">
+          <input class="input" id="evt-nom" placeholder="Nom de l'événement" />
+          <select class="input" id="evt-type">
+            <option value="course">Course</option>
+            <option value="entrainement">Entraînement</option>
+            <option value="sortie">Sortie</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <input class="input" id="evt-date" type="date" />
+          <input class="input" id="evt-lieu" placeholder="Lieu" />
+        </div>
+        <div class="form-row">
+          <input class="input" id="evt-distance" type="number" placeholder="Distance (km)" />
+          <button class="btn" onclick="sauvegarderEvenement()">Enregistrer</button>
+          <button class="btn-ghost" onclick="document.getElementById('form-evenement').style.display='none'">Annuler</button>
+        </div>
       </div>
       <div class="grid2">
         <div class="card">
