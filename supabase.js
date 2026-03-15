@@ -720,8 +720,7 @@ async function synchroniserKmMembres() {
     mis_a_jour++
   }
 
-  alert(`${mis_a_jour} membres mis à jour depuis Strava ! (${toutesActivites.length} activités analysées)`)
-  chargerMembres()
+  alert(`${mis_a_jour} membres mis à jour depuis Strava !\n${toutesActivites.length} dernières activités du club analysées.`)  chargerMembres()
   chargerClassement()
   chargerDashboard()
 }
