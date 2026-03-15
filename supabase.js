@@ -197,6 +197,7 @@ async function seConnecter() {
   chargerParcours()
   chargerDashboard()
   afficherProfil()
+  chargerGraphique()
 }
 
 async function verifierSession() {
@@ -220,6 +221,7 @@ chargerParcours()
 chargerClassementPoints()
 chargerDashboard()
 afficherProfil()
+chargerGraphique()
 
 async function seDeconnecter() {
   await db.auth.signOut()
@@ -524,4 +526,41 @@ async function modifierMembre(id, nom, role, specialite) {
   chargerMembres()
   chargerClassement()
   chargerClassementPoints()
+}
+
+async function chargerGraphique() {
+  const { data, error } = await db
+    .from('membres')
+    .select('nom, km_mois')
+    .order('km_mois', { ascending: false })
+
+  if (error) { console.error(error); return }
+
+  const noms = data.map(m => m.nom.split(' ')[0])
+  const kms = data.map(m => m.km_mois)
+  const couleurs = ['#e8ff47','#4f9eff','#ff6b35','#22d3a0','#9ca3af','#7f77dd']
+
+  if (window.chartProgression) window.chartProgression.destroy()
+
+  window.chartProgression = new Chart(document.getElementById('chart-progression'), {
+    type: 'bar',
+    data: {
+      labels: noms,
+      datasets: [{
+        label: 'Km ce mois',
+        data: kms,
+        backgroundColor: couleurs.slice(0, kms.length),
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: '#6b7280' }, grid: { color: '#ffffff08' } },
+        y: { ticks: { color: '#6b7280' }, grid: { color: '#ffffff08' } }
+      }
+    }
+  })
 }

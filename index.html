@@ -208,15 +208,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       </div>
       <div class="grid2">
         <div class="card">
-          <div class="card-title">Activité hebdomadaire — km</div>
-          <div class="bar-chart">
-            <div class="bar-col"><div class="bar" style="height:45%"></div><div class="bar-label">L</div></div>
-            <div class="bar-col"><div class="bar" style="height:70%"></div><div class="bar-label">M</div></div>
-            <div class="bar-col"><div class="bar" style="height:30%"></div><div class="bar-label">Me</div></div>
-            <div class="bar-col"><div class="bar" style="height:90%"></div><div class="bar-label">J</div></div>
-            <div class="bar-col"><div class="bar accent2" style="height:100%"></div><div class="bar-label">V</div></div>
-            <div class="bar-col"><div class="bar" style="height:55%"></div><div class="bar-label">S</div></div>
-            <div class="bar-col"><div class="bar" style="height:20%"></div><div class="bar-label">D</div></div>
+          <div class="card-title">Progression km — membres</div>
+          <div style="position:relative;height:200px;margin-top:0.5rem">
+            <canvas id="chart-progression"></canvas>
           </div>
         </div>
         <div class="card">
@@ -483,6 +477,7 @@ async function saveMember() {
 }
 </script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
 </body>
