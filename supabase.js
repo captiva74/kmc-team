@@ -475,11 +475,11 @@ function uploaderPhoto(membreId) {
     const file = e.target.files[0]
     if (!file) return
 
-    const nomFichier = `${membreId}.${file.name.split('.').pop()}`
+    const nomFichier = `${membreId}.jpg`
 
     const { error: uploadError } = await db.storage
       .from('photos')
-      .upload(nomFichier, file, { upsert: true })
+      .upload(nomFichier, file, { upsert: true, contentType: file.type })
 
     if (uploadError) { console.error(uploadError); return }
 
@@ -487,9 +487,11 @@ function uploaderPhoto(membreId) {
       .from('photos')
       .getPublicUrl(nomFichier)
 
+    const photoUrl = `${data.publicUrl}?t=${Date.now()}`
+
     const { error } = await db
       .from('membres')
-      .update({ photo_url: data.publicUrl })
+      .update({ photo_url: photoUrl })
       .eq('id', membreId)
 
     if (error) { console.error(error); return }
