@@ -296,3 +296,42 @@ async function supprimerEvenement(id) {
   if (error) { console.error(error); return }
   chargerEvenements()
 }
+
+function afficherFormulaireParcours() {
+  const form = document.getElementById('form-parcours')
+  form.style.display = form.style.display === 'none' ? 'block' : 'none'
+}
+
+async function sauvegarderParcours() {
+  const nom = document.getElementById('par-nom').value.trim()
+  const date = document.getElementById('par-date').value
+  const distance = document.getElementById('par-distance').value
+  const denivele = document.getElementById('par-denivele').value
+  const duree = document.getElementById('par-duree').value
+
+  if (!nom || !date) {
+    alert('Le nom et la date sont obligatoires')
+    return
+  }
+
+  const { error } = await db
+    .from('parcours')
+    .insert([{
+      nom,
+      date_sortie: date,
+      distance_km: parseFloat(distance) || null,
+      denivele_m: parseInt(denivele) || null,
+      duree_min: parseInt(duree) || null
+    }])
+
+  if (error) { console.error(error); return }
+
+  document.getElementById('par-nom').value = ''
+  document.getElementById('par-date').value = ''
+  document.getElementById('par-distance').value = ''
+  document.getElementById('par-denivele').value = ''
+  document.getElementById('par-duree').value = ''
+  document.getElementById('form-parcours').style.display = 'none'
+
+  chargerParcours()
+}

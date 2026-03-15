@@ -378,7 +378,23 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
     <div id="page-parcours" class="page-section" style="display:none">
       <div class="page-header">
         <div class="page-title">PARCOURS <span>GPS</span></div>
-        <button class="btn">+ Importer GPX</button>
+        <button class="btn" onclick="afficherFormulaireParcours()">+ Ajouter parcours</button>
+      </div>
+      <div id="form-parcours" style="display:none;background:#151820;border:1px solid #ffffff12;border-radius:12px;padding:1.5rem;margin-bottom:1.5rem">
+        <div style="font-weight:600;font-size:15px;margin-bottom:1rem">Nouveau parcours</div>
+        <div class="form-row">
+          <input class="input" id="par-nom" placeholder="Nom du parcours" />
+          <input class="input" id="par-date" type="date" />
+        </div>
+        <div class="form-row">
+          <input class="input" id="par-distance" type="number" placeholder="Distance (km)" />
+          <input class="input" id="par-denivele" type="number" placeholder="Dénivelé (m)" />
+        </div>
+        <div class="form-row">
+          <input class="input" id="par-duree" type="number" placeholder="Durée (minutes)" />
+          <button class="btn" onclick="sauvegarderParcours()">Enregistrer</button>
+          <button class="btn-ghost" onclick="document.getElementById('form-parcours').style.display='none'">Annuler</button>
+        </div>
       </div>
       <div class="stats-grid">
         <div class="stat-card"><div class="stat-label">Total saison</div><div class="stat-value">12 480</div><div class="stat-sub">km parcourus</div></div>
