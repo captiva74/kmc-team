@@ -183,6 +183,7 @@ async function seConnecter() {
   chargerEvenements()
   chargerClassement()
   chargerParcours()
+  chargerDashboard()
 }
 
 async function verifierSession() {
@@ -199,6 +200,12 @@ async function verifierSession() {
 }
 
 verifierSession()
+chargerMembres()
+chargerEvenements()
+chargerClassement()
+chargerParcours()
+chargerClassementPoints()
+chargerDashboard()
 
 async function seDeconnecter() {
   await db.auth.signOut()
@@ -397,3 +404,36 @@ async function chargerClassementPoints() {
 }
 
 chargerClassementPoints()
+
+async function chargerDashboard() {
+  const maintenant = new Date()
+  const debut = new Date(maintenant.getFullYear(), maintenant.getMonth(), 1).toISOString().split('T')[0]
+  const fin = new Date(maintenant.getFullYear(), maintenant.getMonth() + 1, 0).toISOString().split('T')[0]
+
+  const { data: membres } = await db
+    .from('membres')
+    .select('km_mois')  
+    .eq('actif', true)
+
+  const { data: evenements } = await db
+    .from('evenements')
+    .select('type, date')
+    .gte('date', debut)
+    .lte('date', fin)
+
+  const { data: parcours } = await db
+    .from('parcours')
+    .select('distance_km')
+
+  const totalKm = membres ? membres.reduce((sum, m) => sum + (m.km_mois || 0), 0) : 0
+  const totalMembres = membres ? membres.length : 0
+  const coursesAvenir = evenements ? evenements.filter(e => e.type === 'course' && e.date >= new Date().toISOString().split('T')[0]).length : 0
+  const totalParcours = parcours ? parcours.length : 0
+
+  document.getElementById('stat-km').textContent = totalKm.toLocaleString()
+  document.getElementById('stat-courses').textContent = coursesAvenir
+  document.getElementById('stat-membres').textContent = totalMembres
+  document.getElementById('stat-parcours').textContent = totalParcours
+}
+
+chargerDashboard()
