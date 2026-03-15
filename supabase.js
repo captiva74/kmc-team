@@ -639,13 +639,12 @@ async function importerMembresClub() {
   for (const athlete of athletes) {
     const nom = `${athlete.firstname} ${athlete.lastname}`
 
-    const { data: existant } = await db
-      .from('membres')
-      .select('id')
-      .eq('nom', nom)
-      .single()
+    const { data: existants } = await db
+    .from('membres')
+    .select('id')
+    .eq('nom', nom)
 
-    if (existant) continue
+    if (existants && existants.length > 0) continue
 
     await db.from('membres').insert([{
       nom: nom,
