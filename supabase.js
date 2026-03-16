@@ -49,18 +49,16 @@ function afficherPageMembres(page) {
       ${membre.photo_url ? `<img src="${membre.photo_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">` : initiales}
     </div>
     <div class="member-info">
-        <div class="member-name">${membre.nom}</div>
-        <div class="member-role">${membre.role || ''} · ${membre.specialite || ''}</div>
+      <div class="member-name">${membre.nom}</div>
+      <div class="member-role">${membre.role || ''} · ${membre.specialite || ''} · <span style="color:var(--accent);font-size:11px">${membre.categorie || ''}</span></div>
     </div>
     <div class="member-stat">
-        <div class="member-km">${membre.km_mois}</div>
-        <div class="member-km-label">km / mois</div>
+      <div class="member-km">${membre.km_mois}</div>
+      <div class="member-km-label">km / mois</div>
     </div>
     <div class="rank-badge ${badge}">${indexGlobal + 1}</div>
-    <button onclick="modifierMembre('${membre.id}', '${membre.nom}', '${membre.role || ''}', '${membre.specialite || ''}')" style="background:none;border:1px solid #ffffff20;color:#6b7280;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;margin-left:6px">✏️</button>
-    <button onclick="modifierKm('${membre.id}', ${membre.km_mois})" style="background:none;border:1px solid #ffffff20;color:#6b7280;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;margin-left:4px">🚴</button>
-    <button onclick="modifierPoints('${membre.id}', ${membre.points})" style="background:none;border:1px solid #e8ff4740;color:#e8ff47;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;margin-left:4px">★</button>
-    <button onclick="uploaderPhoto('${membre.id}')" style="background:none;border:1px solid #4f9eff40;color:#4f9eff;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;margin-left:4px">📷</button>
+    <button onclick="ouvrirModalModif('${membre.id}','${(membre.nom||'').replace(/'/g,'`')}','${membre.role||''}','${membre.specialite||''}','${membre.date_naissance||''}','${membre.categorie||''}',${membre.km_mois||0},'${membre.photo_url||''}','${membre.num_licence||''}')" style="background:none;border:1px solid #ffffff20;color:#6b7280;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;margin-left:6px">✏️</button>
+    <button onclick="modifierPoints('${membre.id}', ${membre.points||0})" style="background:none;border:1px solid #e8ff4740;color:#e8ff47;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;margin-left:4px">★</button>
     <button onclick="supprimerMembre('${membre.id}')" style="background:none;border:1px solid #ff6b3540;color:#ff6b35;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;margin-left:4px">🗑️</button>
     `
     liste.appendChild(div)
@@ -599,30 +597,6 @@ function uploaderPhoto(membreId) {
   input.click()
 }
 
-async function modifierMembre(id, nom, role, specialite) {
-  const nouveauNom = prompt('Nom :', nom)
-  if (nouveauNom === null) return
-
-  const nouveauRole = prompt('Rôle :', role)
-  if (nouveauRole === null) return
-
-  const nouvelleSpecialite = prompt('Spécialité :', specialite)
-  if (nouvelleSpecialite === null) return
-
-  const { error } = await db
-    .from('membres')
-    .update({
-      nom: nouveauNom,
-      role: nouveauRole,
-      specialite: nouvelleSpecialite
-    })
-    .eq('id', id)
-
-  if (error) { console.error(error); return }
-  chargerMembres()
-  chargerClassement()
-  chargerClassementPoints()
-}
 
 async function chargerGraphique() {
   const { data, error } = await db
@@ -734,11 +708,12 @@ async function importerMembresClub() {
     if (existants && existants.length > 0) continue
 
     await db.from('membres').insert([{
-      nom: nom,
-      role: 'Équipier',
-      specialite: 'Cycliste',
-      km_mois: 0,
-      points: 0
+    nom: nom,
+    role: 'Équipier',
+    specialite: 'Cycliste',
+    km_mois: 0,
+    points: 0,
+    categorie: 'Elite'
     }])
     importes++
   }
@@ -1159,3 +1134,108 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnExport = document.getElementById('btn-export')
   if (btnExport) btnExport.onclick = exporterPDF
 })
+
+let modalPhotoFile = null
+
+function ouvrirModalAjout() {
+  document.getElementById('modal-titre').textContent = 'NOUVEAU MEMBRE'
+  document.getElementById('modal-nom').value = ''
+  document.getElementById('modal-role').value = ''
+  document.getElementById('modal-specialite').value = ''
+  document.getElementById('modal-dob').value = ''
+  document.getElementById('modal-categorie').value = ''
+  document.getElementById('modal-licence').value = ''
+  document.getElementById('modal-membre-id').value = ''
+  document.getElementById('modal-avatar-preview').innerHTML = '📷'
+  document.getElementById('modal-error').style.display = 'none'
+  modalPhotoFile = null
+  document.getElementById('modal-membre').style.display = 'flex'
+}
+
+function ouvrirModalModif(id, nom, role, specialite, dob, categorie, km, photoUrl, licence) {
+  document.getElementById('modal-titre').textContent = 'MODIFIER MEMBRE'
+  document.getElementById('modal-nom').value = nom || ''
+  document.getElementById('modal-role').value = role || ''
+  document.getElementById('modal-specialite').value = specialite || ''
+  document.getElementById('modal-dob').value = dob || ''
+  document.getElementById('modal-categorie').value = categorie || ''
+  document.getElementById('modal-licence').value = licence || ''
+  document.getElementById('modal-membre-id').value = id
+  document.getElementById('modal-error').style.display = 'none'
+  modalPhotoFile = null
+  const preview = document.getElementById('modal-avatar-preview')
+  if (photoUrl) {
+    preview.innerHTML = `<img src="${photoUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
+  } else {
+    const initiales = nom ? nom.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase() : '?'
+    preview.innerHTML = initiales
+  }
+  document.getElementById('modal-membre').style.display = 'flex'
+}
+
+function fermerModal() {
+  document.getElementById('modal-membre').style.display = 'none'
+  modalPhotoFile = null
+}
+
+function previewPhoto(input) {
+  if (!input.files[0]) return
+  modalPhotoFile = input.files[0]
+  const reader = new FileReader()
+  reader.onload = e => {
+    document.getElementById('modal-avatar-preview').innerHTML = `<img src="${e.target.result}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`
+  }
+  reader.readAsDataURL(modalPhotoFile)
+}
+
+async function sauvegarderModal() {
+  const id = document.getElementById('modal-membre-id').value
+  const nom = document.getElementById('modal-nom').value.trim()
+  const role = document.getElementById('modal-role').value.trim()
+  const specialite = document.getElementById('modal-specialite').value.trim()
+  const dob = document.getElementById('modal-dob').value
+  const categorie = document.getElementById('modal-categorie').value
+  const licence = document.getElementById('modal-licence').value.trim()
+
+  if (!nom) {
+    document.getElementById('modal-error').style.display = 'block'
+    return
+  }
+
+  let photoUrl = null
+
+  if (modalPhotoFile) {
+    const nomFichier = id ? `${id}.jpg` : `${Date.now()}.jpg`
+    const { error: uploadError } = await db.storage
+      .from('photos')
+      .upload(nomFichier, modalPhotoFile, { upsert: true, contentType: modalPhotoFile.type })
+    if (!uploadError) {
+      const { data } = db.storage.from('photos').getPublicUrl(nomFichier)
+      photoUrl = `${data.publicUrl}?t=${Date.now()}`
+    }
+  }
+
+  const payload = {
+    nom, role: role || 'Equipier',
+    specialite: specialite || null,
+    date_naissance: dob || null,
+    categorie: categorie || null,
+    num_licence: licence || null
+  }
+  if (photoUrl) payload.photo_url = photoUrl
+
+  if (id) {
+    const { error } = await db.from('membres').update(payload).eq('id', id)
+    if (error) { console.error(error); return }
+  } else {
+    const { error } = await db.from('membres').insert([payload])
+    if (error) { console.error(error); return }
+  }
+
+  fermerModal()
+  chargerMembres()
+  chargerClassement()
+  chargerClassementPoints()
+  chargerDashboard()
+  chargerGraphique()
+}

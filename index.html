@@ -66,7 +66,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .event-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;background:var(--surface2);border-left:3px solid var(--accent)}
 .event-item.race{border-left-color:var(--accent2)}
 .event-item.training{border-left-color:#4f9eff}
-.event-date{font-family:'Bebas Neue',sans-serif;font-size:22px;line-height:1;color:var(--text);min-width:30px}
+.event-date{font-size:14px;line-height:1;color:var(--text);min-width:80px}
 .event-info{flex:1}
 .event-name{font-size:13px;font-weight:500}
 .event-detail{font-size:11px;color:var(--muted);margin-top:2px}
@@ -88,15 +88,15 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .form-row{display:flex;gap:10px;margin-bottom:1rem;flex-wrap:wrap}
 .input{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;font-size:13px;color:var(--text);font-family:'DM Sans',sans-serif;flex:1}
 .input:focus{outline:none;border-color:var(--accent)}
-@media(max-width:700px){.sidebar{display:none}.grid2{grid-template-columns:1fr}}
-.page-section{animation:fadeUp 0.3s ease both}
-@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:700px){
   .sidebar{display:none;position:fixed;top:0;left:0;height:100vh;z-index:999;width:220px}
   .sidebar.open{display:flex !important}
   #menu-btn{display:block !important}
   .main{padding-top:3.5rem}
+  .grid2{grid-template-columns:1fr}
 }
+.page-section{animation:fadeUp 0.3s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 </style>
 </head>
 <body>
@@ -105,6 +105,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 <div id="login-page" style="display:none;align-items:center;justify-content:center;min-height:100vh;background:#0d0f14">
   <div style="background:#151820;border:1px solid #ffffff12;border-radius:16px;padding:2.5rem;width:340px">
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:1.5rem">
+      <img src="logo.png" style="width:45px;height:45px;border-radius:50%;object-fit:cover;flex-shrink:0">
       <div>
         <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;color:#e8ff47">KMC</div>
         <div style="font-size:13px;color:#6b7280">Team Manager — Connexion</div>
@@ -118,10 +119,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       Pas encore de compte ?
       <span onclick="afficherRegister()" style="color:#e8ff47;cursor:pointer">S'inscrire</span>
     </div>
-    <div style="text-align:center;margin-top:8px;font-size:13px;color:#6b7280">
+    <div style="text-align:center;margin-top:8px;font-size:13px;">
       <span onclick="afficherForgotPassword()" style="color:#6b7280;cursor:pointer;text-decoration:underline">Mot de passe oublié ?</span>
     </div>
-
     <div id="forgot-form" style="display:none;margin-top:16px;border-top:1px solid #ffffff12;padding-top:16px">
       <p style="font-size:13px;color:#6b7280;margin-bottom:12px">Entrez votre email pour recevoir un lien de réinitialisation.</p>
       <input id="forgot-email" type="email" placeholder="Email" style="width:100%;background:#1c2030;border:1px solid #ffffff12;border-radius:8px;padding:10px 14px;font-size:14px;color:#f0f2f8;margin-bottom:12px;box-sizing:border-box" />
@@ -163,8 +163,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
   <div id="sidebar-overlay" onclick="toggleSidebar()" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#00000080;z-index:998"></div>
   <div class="sidebar">
     <div class="logo" style="display:flex;align-items:center;gap:10px">
-      <div>KMC<br><span>Team Manager</span></div>
       <img src="logo.png" style="width:45px;height:45px;border-radius:50%;object-fit:cover;flex-shrink:0">
+      <div>KMC<br><span>Team Manager</span></div>
     </div>
     <div id="user-info" style="background:#1c2030;border-radius:8px;padding:8px 12px;margin-bottom:1rem;font-size:12px">
       <div style="color:#6b7280;font-size:11px;margin-bottom:2px">Connecté en tant que</div>
@@ -173,17 +173,19 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
     <div style="flex:1;overflow-y:auto">
       <button class="nav-item active" onclick="showPage('dashboard')"><span class="nav-icon">◈</span>Dashboard</button>
       <button class="nav-item" onclick="showPage('membres')"><span class="nav-icon">◎</span>Membres</button>
-      <button class="nav-item" onclick="showPage('calendrier')"><span class="nav-icon">▦</span>Calendrier</button>
+      <button class="nav-item" onclick="showPage('calendrier');construireCalendrier()"><span class="nav-icon">▦</span>Calendrier</button>
       <button class="nav-item" onclick="showPage('classement')"><span class="nav-icon">▲</span>Classement</button>
       <button class="nav-item" onclick="showPage('parcours')"><span class="nav-icon">⊕</span>Parcours GPS</button>
       <button class="nav-item" onclick="connecterStrava()" style="color:#fc4c02"><span class="nav-icon">🚴</span>Connecter Strava</button>
     </div>
     <button class="nav-item" onclick="showPage('profil')"><span class="nav-icon">👤</span>Mon profil</button>
     <button class="nav-item" onclick="seDeconnecter()" style="color:#ff6b35;margin-top:8px"><span class="nav-icon">⏻</span>Déconnexion</button>
-   </div>
+  </div>
 
   <div class="main">
-    <button id="menu-btn" onclick="toggleSidebar()" style="display:none;position:fixed;top:0.75rem;left:0.75rem;z-index:999;background:var(--surface);color:var(--accent);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:16px;cursor:pointer;line-height:1">☰</button>    <!-- Dashboard -->
+    <button id="menu-btn" onclick="toggleSidebar()" style="display:none;position:fixed;top:0.75rem;left:0.75rem;z-index:999;background:var(--surface);color:var(--accent);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:16px;cursor:pointer;line-height:1">☰</button>
+
+    <!-- Dashboard -->
     <div id="page-dashboard" class="page-section">
       <div id="strava-stats"></div>
       <div class="page-header">
@@ -212,17 +214,33 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
     <div id="page-membres" class="page-section" style="display:none">
       <div class="page-header">
         <div class="page-title">LES <span>MEMBRES</span></div>
-        <button class="btn" onclick="addMember()">+ Ajouter</button>
+        <button class="btn" onclick="ouvrirModalAjout()">+ Ajouter</button>
         <button class="btn-ghost" onclick="importerMembresClub()" style="color:#fc4c02;border-color:#fc4c0240">Importer Strava</button>
         <button class="btn-ghost" onclick="synchroniserKmMembres()" style="color:#fc4c02;border-color:#fc4c0240">🔄 Sync km</button>
       </div>
       <input id="recherche-membre" class="input" placeholder="Rechercher un membre..." oninput="filtrerMembres(this.value)" style="margin-bottom:1rem;width:100%" />
       <div class="card">
         <div class="member-list" id="member-list"></div>
-          <div id="pagination-membres" style="display:flex;align-items:center;margin-top:1rem;flex-wrap:wrap;gap:6px;justify-content:center;padding:0 0.5rem"></div>        <div id="add-member-form" style="display:none;margin-top:1rem;border-top:1px solid var(--border);padding-top:1rem">
+        <div id="pagination-membres"></div>
+        <div id="add-member-form" style="display:none;margin-top:1rem;border-top:1px solid var(--border);padding-top:1rem">
+          <div style="font-weight:600;font-size:14px;margin-bottom:0.75rem;color:var(--text)">Nouveau membre</div>
           <div class="form-row">
             <input class="input" id="new-name" placeholder="Nom complet" />
             <input class="input" id="new-role" placeholder="Rôle (ex: Grimpeur)" />
+          </div>
+          <div class="form-row">
+            <input class="input" id="new-dob" type="date" title="Date de naissance" />
+            <select class="input" id="new-categorie">
+              <option value="">Catégorie</option>
+              <option value="Elite">Elite</option>
+              <option value="Master">Master</option>
+              <option value="U23">U23</option>
+              <option value="Junior">Junior</option>
+              <option value="Cadet">Cadet</option>
+              <option value="Minime">Minime</option>
+              <option value="Benjamin">Benjamin</option>
+              <option value="Ecole">Ecole</option>
+            </select>
           </div>
           <div class="form-row">
             <input class="input" id="new-km" placeholder="Km / mois" type="number" />
@@ -353,17 +371,15 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <div class="page-header">
         <div class="page-title">MON <span>PROFIL</span></div>
       </div>
-
       <div class="card">
         <div class="card-title">Changer l'email</div>
         <div class="form-row">
           <input class="input" id="profil-email" type="email" placeholder="Nouvel email" />
         </div>
         <button class="btn" onclick="changerEmail()">Mettre à jour l'email</button>
-        <div id="email-success" style="color:#22d3a0;font-size:13px;margin-top:12px;display:none">Email mis à jour ! Vérifiez votre boîte mail.</div>
+        <div id="email-success" style="color:#22d3a0;font-size:13px;margin-top:12px;display:none">Email mis à jour !</div>
         <div id="email-error" style="color:#ff6b35;font-size:13px;margin-top:12px;display:none">Erreur — réessayez.</div>
       </div>
-
       <div class="card">
         <div class="card-title">Changer le mot de passe</div>
         <div class="form-row">
@@ -374,7 +390,63 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
         </div>
         <button class="btn" onclick="changerMotDePasse()">Mettre à jour le mot de passe</button>
         <div id="password-success" style="color:#22d3a0;font-size:13px;margin-top:12px;display:none">Mot de passe mis à jour !</div>
-        <div id="password-error" style="color:#ff6b35;font-size:13px;margin-top:12px;display:none">Les mots de passe ne correspondent pas.</div>
+        <div id="password-error" style="color:#ff6b35;font-size:13px;margin-top:12px;display:none">Erreur.</div>
+      </div>
+    </div>
+
+    <!-- Modal membre -->
+    <div id="modal-membre" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#00000090;z-index:1000;align-items:center;justify-content:center">
+      <div style="background:#151820;border:1px solid #ffffff20;border-radius:16px;padding:2rem;width:460px;max-width:95vw;max-height:90vh;overflow-y:auto">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
+          <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;color:var(--accent)" id="modal-titre">NOUVEAU MEMBRE</div>
+          <button onclick="fermerModal()" style="background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer">✕</button>
+        </div>
+
+        <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:1.5rem">
+          <div id="modal-avatar-preview" style="width:80px;height:80px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;color:var(--accent);margin-bottom:8px;overflow:hidden;cursor:pointer" onclick="document.getElementById('modal-photo-input').click()">📷</div>
+          <span style="font-size:12px;color:var(--muted)">Cliquez pour ajouter une photo</span>
+          <input type="file" id="modal-photo-input" accept="image/*" style="display:none" onchange="previewPhoto(this)" />
+        </div>
+
+        <div class="form-row">
+          <input class="input" id="modal-nom" placeholder="Nom complet" />
+        </div>
+        <div class="form-row">
+          <input class="input" id="modal-role" placeholder="Rôle (ex: Grimpeur)" />
+          <input class="input" id="modal-specialite" placeholder="Spécialité" />
+        </div>
+        <div class="form-row">
+          <div style="flex:1">
+            <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px">Date de naissance</label>
+            <input class="input" id="modal-dob" type="date" style="width:100%" />
+          </div>
+          <div style="flex:1">
+            <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px">Catégorie</label>
+            <select class="input" id="modal-categorie" style="width:100%">
+              <option value="">Choisir</option>
+              <option value="Elite">Master</option>
+              <option value="Master">Elite</option>
+              <option value="U23">U23</option>
+              <option value="Junior">Junior</option>
+              <option value="Cadet">Cadet</option>
+              <option value="Minime">Minime</option>
+              <option value="Benjamin">Benjamin</option>
+              <option value="Ecole">Ecole</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+        <div style="flex:1">
+          <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px">Numéro de licence</label>
+          <input class="input" id="modal-licence" type="text" placeholder="Ex: 12345678" style="width:100%" />
+        </div>
+        </div>
+        <input type="hidden" id="modal-membre-id" value="" />
+        <div style="display:flex;gap:8px;margin-top:1rem">
+          <button class="btn" onclick="sauvegarderModal()" style="flex:1">Enregistrer</button>
+          <button class="btn-ghost" onclick="fermerModal()">Annuler</button>
+        </div>
+        <div id="modal-error" style="color:#ff6b35;font-size:13px;margin-top:8px;display:none">Le nom est obligatoire.</div>
       </div>
     </div>
 
@@ -399,19 +471,6 @@ function switchTab(el, tabId) {
 }
 function addMember() { document.getElementById('add-member-form').style.display = 'block'; }
 function cancelMember() { document.getElementById('add-member-form').style.display = 'none'; }
-async function saveMember() {
-  const name = document.getElementById('new-name').value.trim()
-  const role = document.getElementById('new-role').value.trim()
-  const km = document.getElementById('new-km').value.trim()
-  if (!name) return
-  const { error } = await db.from('membres').insert([{ nom: name, role: role || 'Equipier', km_mois: parseInt(km) || 0 }])
-  if (error) { console.error('Erreur:', error); return }
-  document.getElementById('new-name').value = ''
-  document.getElementById('new-role').value = ''
-  document.getElementById('new-km').value = ''
-  document.getElementById('add-member-form').style.display = 'none'
-  chargerMembres()
-}
 function toggleSidebar() {
   const sidebar = document.querySelector('.sidebar')
   const overlay = document.getElementById('sidebar-overlay')
