@@ -1012,3 +1012,145 @@ async function construireCalendrier() {
     grid.appendChild(div)
   }
 }
+
+async function exporterPDF() {
+  const { jsPDF } = window.jspdf
+  const doc = new jsPDF()
+
+  const aujourd = new Date().toLocaleDateString('fr-FR')
+  const moisNoms = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre']
+
+  const canvas = document.createElement('canvas')
+  canvas.width = 80
+  canvas.height = 80
+  const ctx = canvas.getContext('2d')
+  const img = new Image()
+  img.src = 'logo.png'
+
+  await new Promise(resolve => {
+    img.onload = () => {
+      try {
+        ctx.beginPath()
+        ctx.arc(40, 40, 40, 0, Math.PI * 2)
+        ctx.clip()
+        ctx.drawImage(img, 0, 0, 80, 80)
+      } catch(e) {}
+      resolve()
+    }
+    img.onerror = resolve
+    img.crossOrigin = 'anonymous'
+  })
+
+  let logoData = null
+  try { logoData = canvas.toDataURL('image/png') } catch(e) {}
+
+  doc.setFillColor(13, 15, 20)
+  doc.rect(0, 0, 210, 45, 'F')
+
+  if (logoData) { try { doc.addImage(logoData, 'PNG', 14, 5, 30, 30) } catch(e) {} }
+
+  doc.setTextColor(30, 120, 220)
+  doc.setFontSize(22)
+  doc.setFont('helvetica', 'bold')
+  doc.text('KMC TEAM MANAGER', 50, 18)
+  doc.setFontSize(10)
+  doc.setTextColor(107, 114, 128)
+  doc.text(`Rapport du ${aujourd}`, 50, 28)
+  doc.setTextColor(30, 120, 220)
+  doc.text('KMC — Khemis Miliana Cycling', 50, 36)
+
+  doc.setTextColor(30, 120, 220)
+  doc.setFontSize(13)
+  doc.setFont('helvetica', 'bold')
+  doc.text('STATISTIQUES DU CLUB', 14, 58)
+  doc.setDrawColor(30, 120, 220)
+  doc.line(14, 61, 196, 61)
+
+  const kmTotal = document.getElementById('stat-km').textContent
+  const membres = document.getElementById('stat-membres').textContent
+  const courses = document.getElementById('stat-courses').textContent
+  const parcours = document.getElementById('stat-parcours').textContent
+
+  doc.setTextColor(0, 0, 0)
+  doc.setFontSize(11)
+  doc.setFont('helvetica', 'normal')
+  doc.text(`Km ce mois : ${kmTotal} km`, 14, 73)
+  doc.text(`Membres actifs : ${membres}`, 14, 83)
+  doc.text(`Courses à venir : ${courses}`, 110, 73)
+  doc.text(`Parcours enregistrés : ${parcours}`, 110, 83)
+
+  doc.setTextColor(30, 120, 220)
+  doc.setFontSize(13)
+  doc.setFont('helvetica', 'bold')
+  doc.text('CLASSEMENT — KM CE MOIS', 14, 100)
+  doc.setDrawColor(30, 120, 220)
+  doc.line(14, 103, 196, 103)
+
+  const { data: membres_data } = await db
+    .from('membres')
+    .select('nom, role, km_mois, points')
+    .order('km_mois', { ascending: false })
+
+  doc.setFillColor(30, 120, 220)
+  doc.rect(14, 106, 182, 8, 'F')
+  doc.setTextColor(255, 255, 255)
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(10)
+  doc.text('Rang', 16, 112)
+  doc.text('Nom', 35, 112)
+  doc.text('Rôle', 110, 112)
+  doc.text('Km', 155, 112)
+  doc.text('Points', 175, 112)
+
+  doc.setFont('helvetica', 'normal')
+  let y = 122
+  membres_data.forEach((m, i) => {
+    if (i % 2 === 0) {
+      doc.setFillColor(235, 242, 255)
+      doc.rect(14, y - 5, 182, 8, 'F')
+    }
+    doc.setTextColor(0, 0, 0)
+    doc.text(`${i + 1}`, 16, y)
+    doc.text(m.nom || '', 35, y)
+    doc.text(m.role || '', 110, y)
+    doc.text(`${m.km_mois || 0} km`, 155, y)
+    doc.text(`${m.points || 0} pts`, 175, y)
+    y += 10
+    if (y > 260) { doc.addPage(); y = 20 }
+  })
+
+  const { data: evenements_data } = await db
+    .from('evenements')
+    .select('*')
+    .order('date', { ascending: true })
+
+  if (evenements_data && evenements_data.length > 0) {
+    if (y > 220) { doc.addPage(); y = 20 }
+    doc.setTextColor(30, 120, 220)
+    doc.setFontSize(13)
+    doc.setFont('helvetica', 'bold')
+    doc.text('ÉVÉNEMENTS', 14, y + 15)
+    doc.setDrawColor(30, 120, 220)
+    doc.line(14, y + 18, 196, y + 18)
+    y += 28
+
+    doc.setFont('helvetica', 'normal')
+    doc.setFontSize(10)
+    evenements_data.forEach(evt => {
+      const date = new Date(evt.date).toLocaleDateString('fr-FR')
+      doc.setTextColor(0, 0, 0)
+      doc.text(`${date} — ${evt.nom} (${evt.type}) — ${evt.lieu || ''} — ${evt.distance_km || ''} km`, 14, y)
+      y += 8
+      if (y > 270) { doc.addPage(); y = 20 }
+    })
+  }
+
+  doc.setFillColor(13, 15, 20)
+  doc.rect(0, 285, 210, 12, 'F')
+  doc.setTextColor(30, 120, 220)
+  doc.setFontSize(8)
+  doc.text('KMC — Khemis Miliana Cycling Team Manager', 14, 292)
+  doc.text(`Généré le ${aujourd}`, 160, 292)
+
+  doc.save(`KMC_Rapport_${aujourd.replace(/\//g, '-')}.pdf`)
+}

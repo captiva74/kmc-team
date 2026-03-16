@@ -188,6 +188,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <div id="strava-stats"></div>
       <div class="page-header">
         <div class="page-title">TABLEAU DE <span>BORD</span></div>
+        <button class="btn-ghost" onclick="exporterPDF()">📄 Exporter PDF</button>
       </div>
       <div class="stats-grid">
         <div class="stat-card"><div class="stat-label">Km ce mois</div><div class="stat-value" id="stat-km">—</div><div class="stat-sub">Total équipe</div></div>
@@ -419,6 +420,7 @@ function toggleSidebar() {
 }
 </script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
