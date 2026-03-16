@@ -1154,3 +1154,8 @@ async function exporterPDF() {
 
   doc.save(`KMC_Rapport_${aujourd.replace(/\//g, '-')}.pdf`)
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+  const btnExport = document.getElementById('btn-export')
+  if (btnExport) btnExport.onclick = exporterPDF
+})
