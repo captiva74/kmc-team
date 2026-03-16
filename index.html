@@ -235,7 +235,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
     <!-- Calendrier -->
     <div id="page-calendrier" class="page-section" style="display:none">
       <div class="page-header">
-        <div class="page-title">MARS <span>2026</span></div>
+        <div class="page-title" id="calendrier-titre">MARS <span>2026</span></div>
         <button class="btn" onclick="afficherFormulaireEvenement()">+ Ajouter</button>
       </div>
       <div id="form-evenement" style="display:none;background:#151820;border:1px solid #ffffff12;border-radius:12px;padding:1.5rem;margin-bottom:1.5rem">
@@ -260,14 +260,19 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       </div>
       <div class="grid2">
         <div class="card">
-          <div class="cal-grid">
-            <div class="cal-header">L</div><div class="cal-header">M</div><div class="cal-header">Me</div><div class="cal-header">J</div><div class="cal-header">V</div><div class="cal-header">S</div><div class="cal-header">D</div>
-            <div></div><div></div><div></div><div></div><div></div><div class="cal-day">1</div><div class="cal-day">2</div>
-            <div class="cal-day">3</div><div class="cal-day">4</div><div class="cal-day active-day">5</div><div class="cal-day">6</div><div class="cal-day">7</div><div class="cal-day active-day">8</div><div class="cal-day">9</div>
-            <div class="cal-day">10</div><div class="cal-day">11</div><div class="cal-day">12</div><div class="cal-day">13</div><div class="cal-day">14</div><div class="cal-day today">15</div><div class="cal-day">16</div>
-            <div class="cal-day">17</div><div class="cal-day">18</div><div class="cal-day">19</div><div class="cal-day">20</div><div class="cal-day">21</div><div class="cal-day">22</div><div class="cal-day">23</div>
-            <div class="cal-day">24</div><div class="cal-day">25</div><div class="cal-day">26</div><div class="cal-day">27</div><div class="cal-day">28</div><div class="cal-day">29</div><div class="cal-day">30</div>
-            <div class="cal-day">31</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+            <button onclick="changerMois(-1)" style="background:none;border:1px solid var(--border);color:var(--text);border-radius:6px;padding:4px 12px;font-size:16px;cursor:pointer">←</button>
+            <span id="cal-mois-titre" style="font-size:14px;font-weight:500;color:var(--text)"></span>
+            <button onclick="changerMois(1)" style="background:none;border:1px solid var(--border);color:var(--text);border-radius:6px;padding:4px 12px;font-size:16px;cursor:pointer">→</button>
+          </div>
+          <div class="cal-grid" id="cal-grid">
+            <div class="cal-header">L</div>
+            <div class="cal-header">M</div>
+            <div class="cal-header">Me</div>
+            <div class="cal-header">J</div>
+            <div class="cal-header">V</div>
+            <div class="cal-header">S</div>
+            <div class="cal-header">D</div>
           </div>
           <div style="display:flex;gap:12px;margin-top:1rem;font-size:11px;color:var(--muted)">
             <span style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:50%;background:var(--accent2)"></span>Course</span>

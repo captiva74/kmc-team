@@ -133,6 +133,9 @@ async function chargerEvenements() {
   data.forEach(evt => {
     const date = new Date(evt.date)
     const jour = date.getDate().toString().padStart(2, '0')
+    const mois = (date.getMonth() + 1).toString().padStart(2, '0')
+    const annee = date.getFullYear()
+    const dateAffichee = `${jour}-${mois}-${annee}`
 
     const typeBadge = evt.type === 'course' ? 'race' : 'training'
     const badgeLabel = evt.type === 'course' ? 'Course' : 'Entraîn.'
@@ -141,7 +144,7 @@ async function chargerEvenements() {
     const div = document.createElement('div')
     div.className = `event-item ${typeBadge}`
     div.innerHTML = `
-    <div class="event-date">${jour}</div>
+    <div class="event-date" style="font-size:14px;min-width:80px">${dateAffichee}</div>
     <div class="event-info">
         <div class="event-name">${evt.nom}</div>
         <div class="event-detail">${evt.lieu || ''} — ${evt.distance_km || ''} km</div>
@@ -267,6 +270,7 @@ async function seConnecter() {
   afficherProfil()
   chargerGraphique()
   afficherStatsStrava()
+  construireCalendrier()
 }
 
 async function verifierSession() {
@@ -299,6 +303,7 @@ async function verifierSession() {
     afficherProfil()
     chargerGraphique()
     afficherStatsStrava()
+    construireCalendrier()
     const urlParams = new URLSearchParams(window.location.search)
     const stravaCode = urlParams.get('code')
     if (stravaCode) {
@@ -945,4 +950,65 @@ async function changerMotDePasse() {
   document.getElementById('password-error').style.display = 'none'
   document.getElementById('profil-password').value = ''
   document.getElementById('profil-password-confirm').value = ''
+}
+
+let moisActuel = new Date().getMonth()
+let anneeActuelle = new Date().getFullYear()
+
+function changerMois(direction) {
+  moisActuel += direction
+  if (moisActuel > 11) { moisActuel = 0; anneeActuelle++ }
+  if (moisActuel < 0) { moisActuel = 11; anneeActuelle-- }
+  construireCalendrier()
+  chargerEvenements()
+}
+
+async function construireCalendrier() {
+  const moisNoms = ['JANVIER','FÉVRIER','MARS','AVRIL','MAI','JUIN','JUILLET','AOÛT','SEPTEMBRE','OCTOBRE','NOVEMBRE','DÉCEMBRE']
+
+  document.getElementById('calendrier-titre').innerHTML = `${moisNoms[moisActuel]} <span>${anneeActuelle}</span>`
+  const calMoisTitre = document.getElementById('cal-mois-titre')
+  if (calMoisTitre) calMoisTitre.textContent = `${moisNoms[moisActuel]} ${anneeActuelle}`
+
+  const premierJour = new Date(anneeActuelle, moisActuel, 1).getDay()
+  const decalage = premierJour === 0 ? 6 : premierJour - 1
+  const nbJours = new Date(anneeActuelle, moisActuel + 1, 0).getDate()
+  const aujourdhui = new Date()
+
+  const grid = document.getElementById('cal-grid')
+  const headers = grid.querySelectorAll('.cal-header')
+  grid.innerHTML = ''
+  headers.forEach(h => grid.appendChild(h.cloneNode(true)))
+
+  for (let i = 0; i < decalage; i++) {
+    const vide = document.createElement('div')
+    grid.appendChild(vide)
+  }
+
+  const { data: evenements } = await db
+    .from('evenements')
+    .select('date, type')
+    .gte('date', `${anneeActuelle}-${String(moisActuel+1).padStart(2,'0')}-01`)
+    .lte('date', `${anneeActuelle}-${String(moisActuel+1).padStart(2,'0')}-${String(nbJours).padStart(2,'0')}`)
+
+  for (let j = 1; j <= nbJours; j++) {
+    const div = document.createElement('div')
+    div.className = 'cal-day'
+    div.textContent = j
+
+    const dateStr = `${anneeActuelle}-${String(moisActuel+1).padStart(2,'0')}-${String(j).padStart(2,'0')}`
+    const estAujourdhui = j === aujourdhui.getDate() && moisActuel === aujourdhui.getMonth() && anneeActuelle === aujourdhui.getFullYear()
+
+    if (estAujourdhui) div.classList.add('today')
+
+    if (evenements) {
+      const evtDuJour = evenements.filter(e => e.date === dateStr)
+      if (evtDuJour.length > 0) {
+        const type = evtDuJour[0].type
+        div.classList.add(type === 'course' ? 'has-event' : 'has-event2')
+      }
+    }
+
+    grid.appendChild(div)
+  }
 }
