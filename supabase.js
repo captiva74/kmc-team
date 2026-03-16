@@ -68,6 +68,13 @@ function afficherPageMembres(page) {
 
   const pagination = document.getElementById('pagination-membres')
   pagination.innerHTML = ''
+  pagination.style.display = 'flex'
+  pagination.style.flexWrap = 'wrap'
+  pagination.style.gap = '6px'
+  pagination.style.justifyContent = 'center'
+  pagination.style.marginTop = '1rem'
+  pagination.style.padding = '0 0.5rem'
+  pagination.style.cssText = 'display:flex;align-items:center;margin-top:1rem;flex-wrap:wrap;gap:6px;justify-content:center'
 
   if (totalPages <= 1) return
 
