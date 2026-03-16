@@ -1240,3 +1240,139 @@ async function sauvegarderModal() {
   chargerDashboard()
   chargerGraphique()
 }
+
+async function exporterEngagement() {
+  const { jsPDF } = window.jspdf
+  const doc = new jsPDF()
+
+  const competition = document.getElementById('eng-competition').value.trim() || 'Compétition'
+  const nature = document.getElementById('eng-nature').value.trim() || ''
+  const date = document.getElementById('eng-date').value
+  const lieu = document.getElementById('eng-lieu').value.trim()
+  const organisateur = document.getElementById('eng-organisateur').value.trim() || 'FAC/DJSL/LAC'
+  const entraineur = document.getElementById('eng-entraineur').value.trim()
+  const categorie = document.getElementById('eng-categorie').value
+  const dateAff = date ? new Date(date).toLocaleDateString('fr-FR') : ''
+
+  const loadLogo = (src) => new Promise(resolve => {
+    const canvas = document.createElement('canvas')
+    canvas.width = 80; canvas.height = 80
+    const ctx = canvas.getContext('2d')
+    const img = new Image()
+    img.crossOrigin = 'anonymous'
+    img.onload = () => {
+      try {
+        ctx.beginPath()
+        ctx.arc(40, 40, 40, 0, Math.PI * 2)
+        ctx.clip()
+        ctx.drawImage(img, 0, 0, 80, 80)
+      } catch(e) {}
+      try { resolve(canvas.toDataURL('image/png')) } catch(e) { resolve(null) }
+    }
+    img.onerror = () => resolve(null)
+    img.src = src
+  })
+
+  const logo1 = await loadLogo('logo.png')
+
+  if (logo1) { try { doc.addImage(logo1, 'PNG', 10, 6, 28, 28) } catch(e) {} }
+
+  doc.setTextColor(30, 120, 220)
+  doc.setFontSize(10)
+  doc.setFont('helvetica', 'bold')
+  doc.text('Club KMC - Khemis Miliana Cycling', 105, 12, { align: 'center' })
+  doc.text('Wilaya Ain Defla - Algerie', 105, 19, { align: 'center' })
+  doc.text('Club KMC - Khemis Miliana Cycling', 105, 12, { align: 'center' })
+  doc.text('Wilaya Ain Defla - Algerie', 105, 19, { align: 'center' })
+  doc.text('Nadie Riadhi Khemis Miliana lil Darajat', 105, 26, { align: 'center' })
+
+  doc.setTextColor(0, 0, 0)
+  doc.setFontSize(24)
+  doc.setFont('helvetica', 'bold')
+  doc.text('ENGAGEMENT', 105, 46, { align: 'center' })
+
+  doc.setFontSize(10)
+  doc.setFont('helvetica', 'bold')
+  doc.text(`Competition : ${competition}`, 14, 58)
+  doc.setFont('helvetica', 'normal')
+  doc.text(`Date : ${dateAff}`, 14, 67)
+  doc.text(`Lieu : ${lieu}`, 110, 67)
+  doc.setFont('helvetica', 'bold')
+  doc.text(`Organisateurs : ${organisateur}`, 14, 76)
+  doc.text(`Nature de l'evenement : ${nature}`, 14, 85)
+  doc.text('Club : K.M.C KHEMIS MILIANA CYCLING', 14, 94)
+  doc.text('Wilaya Ain Defla', 116, 94)
+  if (categorie) doc.text(`Categorie : ${categorie.toUpperCase()}`, 160, 94)
+  doc.text(`Entraineur : ${entraineur}`, 14, 103)
+  doc.setFont('helvetica', 'bold')
+  doc.text('LISTE DES COUREURS', 14, 113)
+
+  let query = db.from('membres').select('nom, num_licence, date_naissance, categorie')
+  if (categorie) query = query.eq('categorie', categorie)
+  query = query.order('nom', { ascending: true })
+  const { data: coureurs } = await query
+
+const rowH = 10
+  let y = 118
+
+  const colDos = 14
+  const colNom = 30
+  const colLic = 118
+  const colDob = 150
+  const colEm = 178
+  const endCol = 196
+
+  const drawRow = (y) => {
+    doc.rect(colDos, y, endCol - colDos, rowH)
+    doc.line(colNom, y, colNom, y + rowH)
+    doc.line(colLic, y, colLic, y + rowH)
+    doc.line(colDob, y, colDob, y + rowH)
+    doc.line(colEm, y, colEm, y + rowH)
+  }
+
+  doc.setFillColor(200, 200, 200)
+  doc.rect(colDos, y, endCol - colDos, rowH, 'F')
+  doc.setDrawColor(0)
+  doc.setLineWidth(0.3)
+  drawRow(y)
+  doc.setFontSize(8)
+  doc.setFont('helvetica', 'bold')
+  doc.text('N Dos', colDos + 1, y + 7)
+  doc.text('Nom et Prenoms', colNom + 1, y + 7)
+  doc.text('N Licence', colLic + 1, y + 7)
+  doc.text('Date naissance', colDob + 1, y + 7)
+  doc.text('Emargement', colEm + 1, y + 7)
+  y += rowH
+
+  doc.setFont('helvetica', 'normal')
+  coureurs.forEach((c, i) => {
+    const dob = c.date_naissance ? new Date(c.date_naissance).toLocaleDateString('fr-FR') : ''
+    drawRow(y)
+    doc.text((c.nom || '').substring(0, 22), colNom + 1, y + 7)
+    doc.text(c.num_licence || '', colLic + 1, y + 7)
+    doc.text(dob, colDob + 1, y + 7)
+    y += rowH
+    if (y > 265) { doc.addPage(); y = 20 }
+  })
+
+  y += 15
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(12)
+  doc.text('President du club', 150, y)
+
+  doc.setFont('helvetica', 'normal')
+  doc.setFontSize(9)
+  doc.setTextColor(100, 100, 100)
+  doc.text('KMC.cyclisme@gmail.com', 14, 287)
+  doc.text('Tel : 0555099086 - 0659014436 - 0661668666', 105, 287, { align: 'center' })
+
+  document.getElementById('eng-competition').value = ''
+  document.getElementById('eng-nature').value = ''
+  document.getElementById('eng-date').value = ''
+  document.getElementById('eng-lieu').value = ''
+  document.getElementById('eng-organisateur').value = ''
+  document.getElementById('eng-entraineur').value = ''
+  document.getElementById('eng-categorie').value = ''
+
+  doc.save(`KMC_Engagement_${categorie || 'Tous'}_${dateAff.replace(/\//g,'-') || 'date'}.pdf`)
+}
