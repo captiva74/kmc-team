@@ -178,8 +178,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <button class="nav-item" onclick="showPage('parcours')"><span class="nav-icon">⊕</span>Parcours GPS</button>
       <button class="nav-item" onclick="connecterStrava()" style="color:#fc4c02"><span class="nav-icon">🚴</span>Connecter Strava</button>
     </div>
+    <button class="nav-item" onclick="showPage('profil')"><span class="nav-icon">👤</span>Mon profil</button>
     <button class="nav-item" onclick="seDeconnecter()" style="color:#ff6b35;margin-top:8px"><span class="nav-icon">⏻</span>Déconnexion</button>
-  </div>
+   </div>
 
   <div class="main">
     <button id="menu-btn" onclick="toggleSidebar()" style="display:none;position:fixed;top:0.75rem;left:0.75rem;z-index:999;background:var(--surface);color:var(--accent);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:16px;cursor:pointer;line-height:1">☰</button>    <!-- Dashboard -->
@@ -338,6 +339,36 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <div class="card">
         <div class="card-title">Parcours récents</div>
         <div id="parcours-list"></div>
+      </div>
+    </div>
+
+    <!-- Profil -->
+    <div id="page-profil" class="page-section" style="display:none">
+      <div class="page-header">
+        <div class="page-title">MON <span>PROFIL</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Changer l'email</div>
+        <div class="form-row">
+          <input class="input" id="profil-email" type="email" placeholder="Nouvel email" />
+        </div>
+        <button class="btn" onclick="changerEmail()">Mettre à jour l'email</button>
+        <div id="email-success" style="color:#22d3a0;font-size:13px;margin-top:12px;display:none">Email mis à jour ! Vérifiez votre boîte mail.</div>
+        <div id="email-error" style="color:#ff6b35;font-size:13px;margin-top:12px;display:none">Erreur — réessayez.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Changer le mot de passe</div>
+        <div class="form-row">
+          <input class="input" id="profil-password" type="password" placeholder="Nouveau mot de passe" />
+        </div>
+        <div class="form-row">
+          <input class="input" id="profil-password-confirm" type="password" placeholder="Confirmer le mot de passe" />
+        </div>
+        <button class="btn" onclick="changerMotDePasse()">Mettre à jour le mot de passe</button>
+        <div id="password-success" style="color:#22d3a0;font-size:13px;margin-top:12px;display:none">Mot de passe mis à jour !</div>
+        <div id="password-error" style="color:#ff6b35;font-size:13px;margin-top:12px;display:none">Les mots de passe ne correspondent pas.</div>
       </div>
     </div>
 

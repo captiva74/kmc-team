@@ -909,3 +909,47 @@ async function resetPassword() {
     document.getElementById('login-page').style.display = 'flex'
   }, 2000)
 }
+
+async function changerEmail() {
+  const email = document.getElementById('profil-email').value.trim()
+  if (!email) return
+
+  const { error } = await db.auth.updateUser({ email })
+
+  if (error) {
+    document.getElementById('email-error').style.display = 'block'
+    document.getElementById('email-success').style.display = 'none'
+    return
+  }
+
+  document.getElementById('email-success').style.display = 'block'
+  document.getElementById('email-error').style.display = 'none'
+  document.getElementById('profil-email').value = ''
+}
+
+async function changerMotDePasse() {
+  const password = document.getElementById('profil-password').value.trim()
+  const confirm = document.getElementById('profil-password-confirm').value.trim()
+
+  if (!password) return
+
+  if (password !== confirm) {
+    document.getElementById('password-error').textContent = 'Les mots de passe ne correspondent pas.'
+    document.getElementById('password-error').style.display = 'block'
+    return
+  }
+
+  const { error } = await db.auth.updateUser({ password })
+
+  if (error) {
+    document.getElementById('password-error').textContent = 'Erreur — réessayez.'
+    document.getElementById('password-error').style.display = 'block'
+    document.getElementById('password-success').style.display = 'none'
+    return
+  }
+
+  document.getElementById('password-success').style.display = 'block'
+  document.getElementById('password-error').style.display = 'none'
+  document.getElementById('profil-password').value = ''
+  document.getElementById('profil-password-confirm').value = ''
+}
