@@ -65,49 +65,42 @@ function afficherPageMembres(page) {
     `
     liste.appendChild(div)
   })
+const pagination = document.getElementById('pagination-membres')
+pagination.innerHTML = ''
 
-  const pagination = document.getElementById('pagination-membres')
-  pagination.innerHTML = ''
-  pagination.style.display = 'flex'
-  pagination.style.flexWrap = 'wrap'
-  pagination.style.gap = '6px'
-  pagination.style.justifyContent = 'center'
-  pagination.style.marginTop = '1rem'
-  pagination.style.padding = '0 0.5rem'
-  pagination.style.cssText = 'display:flex;align-items:center;margin-top:1rem;flex-wrap:wrap;gap:6px;justify-content:center'
+if (totalPages <= 1) return
 
-  if (totalPages <= 1) return
+const wrapper = document.createElement('div')
+wrapper.style.cssText = 'width:100%;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;margin-top:1rem;padding:0 0.5rem'
 
-  const prev = document.createElement('button')
-  prev.className = 'btn-ghost'
-  prev.textContent = '← Précédent'
-  prev.style.cssText = 'font-size:12px;padding:6px 12px;margin-right:8px'
-  prev.disabled = page === 1
-  prev.style.opacity = page === 1 ? '0.3' : '1'
-  prev.onclick = () => afficherPageMembres(page - 1)
-  pagination.appendChild(prev)
+const prev = document.createElement('button')
+prev.textContent = '←'
+prev.style.cssText = `font-size:13px;padding:6px 12px;border-radius:6px;border:1px solid var(--border);background:none;color:${page === 1 ? '#ffffff20' : 'var(--text)'};cursor:pointer`
+prev.disabled = page === 1
+prev.onclick = () => afficherPageMembres(page - 1)
+wrapper.appendChild(prev)
 
-  for (let i = 1; i <= totalPages; i++) {
-    const btn = document.createElement('button')
-    btn.textContent = i
-    btn.style.cssText = `font-size:12px;padding:6px 10px;margin-right:4px;border-radius:6px;border:1px solid ${i === page ? 'var(--accent)' : '#ffffff20'};background:${i === page ? 'var(--accent)' : 'none'};color:${i === page ? '#0d0f14' : '#6b7280'};cursor:pointer`
-    btn.onclick = () => afficherPageMembres(i)
-    pagination.appendChild(btn)
-  }
+for (let i = 1; i <= totalPages; i++) {
+  const btn = document.createElement('button')
+  btn.textContent = i
+  btn.style.cssText = `font-size:13px;padding:6px 10px;border-radius:6px;border:1px solid ${i === page ? 'var(--accent)' : 'var(--border)'};background:${i === page ? 'var(--accent)' : 'none'};color:${i === page ? '#0d0f14' : 'var(--muted)'};cursor:pointer;min-width:32px`
+  btn.onclick = () => afficherPageMembres(i)
+  wrapper.appendChild(btn)
+}
 
-  const next = document.createElement('button')
-  next.className = 'btn-ghost'
-  next.textContent = 'Suivant →'
-  next.style.cssText = 'font-size:12px;padding:6px 12px;margin-left:4px'
-  next.disabled = page === totalPages
-  next.style.opacity = page === totalPages ? '0.3' : '1'
-  next.onclick = () => afficherPageMembres(page + 1)
-  pagination.appendChild(next)
+const next = document.createElement('button')
+next.textContent = '→'
+next.style.cssText = `font-size:13px;padding:6px 12px;border-radius:6px;border:1px solid var(--border);background:none;color:${page === totalPages ? '#ffffff20' : 'var(--text)'};cursor:pointer`
+next.disabled = page === totalPages
+next.onclick = () => afficherPageMembres(page + 1)
+wrapper.appendChild(next)
 
-  const info = document.createElement('span')
-  info.style.cssText = 'font-size:12px;color:#6b7280;margin-left:12px'
-  info.textContent = `${total} membres au total`
-  pagination.appendChild(info)
+const info = document.createElement('div')
+info.style.cssText = 'width:100%;text-align:center;font-size:11px;color:var(--muted);margin-top:4px'
+info.textContent = `Page ${page} sur ${totalPages} — ${total} membres`
+wrapper.appendChild(info)
+
+pagination.appendChild(wrapper)
 }
 
 function filtrerMembres(texte) {
