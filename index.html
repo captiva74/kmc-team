@@ -118,6 +118,17 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       Pas encore de compte ?
       <span onclick="afficherRegister()" style="color:#e8ff47;cursor:pointer">S'inscrire</span>
     </div>
+    <div style="text-align:center;margin-top:8px;font-size:13px;color:#6b7280">
+      <span onclick="afficherForgotPassword()" style="color:#6b7280;cursor:pointer;text-decoration:underline">Mot de passe oublié ?</span>
+    </div>
+
+    <div id="forgot-form" style="display:none;margin-top:16px;border-top:1px solid #ffffff12;padding-top:16px">
+      <p style="font-size:13px;color:#6b7280;margin-bottom:12px">Entrez votre email pour recevoir un lien de réinitialisation.</p>
+      <input id="forgot-email" type="email" placeholder="Email" style="width:100%;background:#1c2030;border:1px solid #ffffff12;border-radius:8px;padding:10px 14px;font-size:14px;color:#f0f2f8;margin-bottom:12px;box-sizing:border-box" />
+      <button onclick="envoyerResetPassword()" style="width:100%;background:#4f9eff;color:#fff;border:none;border-radius:8px;padding:11px;font-size:14px;font-weight:700;cursor:pointer">Envoyer le lien</button>
+      <div id="forgot-success" style="color:#22d3a0;font-size:13px;margin-top:12px;display:none">Email envoyé ! Vérifiez votre boîte mail.</div>
+      <div id="forgot-error" style="color:#ff6b35;font-size:13px;margin-top:12px;display:none">Email introuvable.</div>
+    </div>
     <div id="register-form" style="display:none;margin-top:16px;border-top:1px solid #ffffff12;padding-top:16px">
       <input id="register-email" type="email" placeholder="Email" style="width:100%;background:#1c2030;border:1px solid #ffffff12;border-radius:8px;padding:10px 14px;font-size:14px;color:#f0f2f8;margin-bottom:12px;box-sizing:border-box" />
       <input id="register-password" type="password" placeholder="Mot de passe" style="width:100%;background:#1c2030;border:1px solid #ffffff12;border-radius:8px;padding:10px 14px;font-size:14px;color:#f0f2f8;margin-bottom:12px;box-sizing:border-box" />
@@ -125,6 +136,24 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <div id="register-success" style="color:#22d3a0;font-size:13px;margin-top:12px;display:none">Compte créé ! Vérifiez votre email.</div>
       <div id="register-error" style="color:#ff6b35;font-size:13px;margin-top:12px;display:none">Erreur lors de l'inscription.</div>
     </div>
+  </div>
+</div>
+
+<!-- Page Reset Password -->
+<div id="reset-page" style="display:none;align-items:center;justify-content:center;min-height:100vh;background:#0d0f14">
+  <div style="background:#151820;border:1px solid #ffffff12;border-radius:16px;padding:2.5rem;width:340px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:1.5rem">
+      <img src="logo.png" style="width:45px;height:45px;border-radius:50%;object-fit:cover;flex-shrink:0">
+      <div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;color:#e8ff47">KMC</div>
+        <div style="font-size:13px;color:#6b7280">Nouveau mot de passe</div>
+      </div>
+    </div>
+    <input id="new-password" type="password" placeholder="Nouveau mot de passe" style="width:100%;background:#1c2030;border:1px solid #ffffff12;border-radius:8px;padding:10px 14px;font-size:14px;color:#f0f2f8;margin-bottom:12px;box-sizing:border-box" />
+    <input id="confirm-password" type="password" placeholder="Confirmer le mot de passe" style="width:100%;background:#1c2030;border:1px solid #ffffff12;border-radius:8px;padding:10px 14px;font-size:14px;color:#f0f2f8;margin-bottom:16px;box-sizing:border-box" />
+    <button onclick="resetPassword()" style="width:100%;background:#e8ff47;color:#0d0f14;border:none;border-radius:8px;padding:11px;font-size:14px;font-weight:700;cursor:pointer">Changer le mot de passe</button>
+    <div id="reset-error" style="color:#ff6b35;font-size:13px;margin-top:12px;display:none">Les mots de passe ne correspondent pas.</div>
+    <div id="reset-success" style="color:#22d3a0;font-size:13px;margin-top:12px;display:none">Mot de passe changé ! Vous pouvez vous connecter.</div>
   </div>
 </div>
 

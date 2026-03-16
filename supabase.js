@@ -277,6 +277,22 @@ async function seConnecter() {
 }
 
 async function verifierSession() {
+  const hashParams = new URLSearchParams(window.location.hash.substring(1))
+  const accessToken = hashParams.get('access_token')
+  const type = hashParams.get('type')
+
+  if (accessToken && type === 'recovery') {
+    await db.auth.setSession({
+      access_token: accessToken,
+      refresh_token: hashParams.get('refresh_token')
+    })
+    window.history.replaceState({}, document.title, '/')
+    document.getElementById('login-page').style.display = 'none'
+    document.getElementById('app-page').style.display = 'none'
+    document.getElementById('reset-page').style.display = 'flex'
+    return
+  }
+
   const { data } = await db.auth.getSession()
   if (data.session) {
     document.getElementById('login-page').style.display = 'none'
@@ -290,7 +306,6 @@ async function verifierSession() {
     afficherProfil()
     chargerGraphique()
     afficherStatsStrava()
-
     const urlParams = new URLSearchParams(window.location.search)
     const stravaCode = urlParams.get('code')
     if (stravaCode) {
@@ -304,6 +319,7 @@ async function verifierSession() {
 }
 
 verifierSession()
+
 
 async function seDeconnecter() {
   await db.auth.signOut()
@@ -843,4 +859,53 @@ async function afficherStatsStrava() {
       </div>
     </div>
   `
+}
+
+function afficherForgotPassword() {
+  const form = document.getElementById('forgot-form')
+  form.style.display = form.style.display === 'none' ? 'block' : 'none'
+  document.getElementById('register-form').style.display = 'none'
+}
+
+async function envoyerResetPassword() {
+  const email = document.getElementById('forgot-email').value.trim()
+  if (!email) return
+
+  const { error } = await db.auth.resetPasswordForEmail(email, {
+    redirectTo: 'https://kmc-team.vercel.app'
+  })
+
+  if (error) {
+    document.getElementById('forgot-error').style.display = 'block'
+    document.getElementById('forgot-success').style.display = 'none'
+    return
+  }
+
+  document.getElementById('forgot-success').style.display = 'block'
+  document.getElementById('forgot-error').style.display = 'none'
+}
+
+async function resetPassword() {
+  const newPassword = document.getElementById('new-password').value.trim()
+  const confirmPassword = document.getElementById('confirm-password').value.trim()
+
+  if (newPassword !== confirmPassword) {
+    document.getElementById('reset-error').style.display = 'block'
+    return
+  }
+
+  const { error } = await db.auth.updateUser({ password: newPassword })
+
+  if (error) {
+    document.getElementById('reset-error').textContent = 'Erreur — réessayez.'
+    document.getElementById('reset-error').style.display = 'block'
+    return
+  }
+
+  document.getElementById('reset-success').style.display = 'block'
+  document.getElementById('reset-error').style.display = 'none'
+  setTimeout(() => {
+    document.getElementById('reset-page').style.display = 'none'
+    document.getElementById('login-page').style.display = 'flex'
+  }, 2000)
 }
