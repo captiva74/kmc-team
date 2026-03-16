@@ -1063,7 +1063,7 @@ async function exporterPDF() {
 
   const { data: membres_data } = await db
     .from('membres')
-    .select('nom, role, km_mois, points')
+    .select('nom, role, km_mois, points, categorie, num_licence, date_naissance')
     .order('km_mois', { ascending: false })
 
   doc.setFillColor(30, 120, 220)
@@ -1073,9 +1073,9 @@ async function exporterPDF() {
   doc.setFontSize(10)
   doc.text('Rang', 16, 112)
   doc.text('Nom', 35, 112)
-  doc.text('Rôle', 110, 112)
-  doc.text('Km', 155, 112)
-  doc.text('Points', 175, 112)
+  doc.text('Date naissance', 95, 112)
+  doc.text('Catégorie', 145, 112)
+  doc.text('Licence', 175, 112)
 
   doc.setFont('helvetica', 'normal')
   let y = 122
@@ -1084,12 +1084,13 @@ async function exporterPDF() {
       doc.setFillColor(235, 242, 255)
       doc.rect(14, y - 5, 182, 8, 'F')
     }
+    const dob = m.date_naissance ? new Date(m.date_naissance).toLocaleDateString('fr-FR') : ''
     doc.setTextColor(0, 0, 0)
     doc.text(`${i + 1}`, 16, y)
-    doc.text(m.nom || '', 35, y)
-    doc.text(m.role || '', 110, y)
-    doc.text(`${m.km_mois || 0} km`, 155, y)
-    doc.text(`${m.points || 0} pts`, 175, y)
+    doc.text((m.nom || '').substring(0, 22), 35, y)
+    doc.text(dob, 95, y)
+    doc.text(m.categorie || '', 145, y)
+    doc.text(m.num_licence || '', 175, y)
     y += 10
     if (y > 260) { doc.addPage(); y = 20 }
   })
