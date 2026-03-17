@@ -988,32 +988,51 @@ async function construireCalendrier() {
   }
 }
 
+async function chargerPoliceAmiri() {
+  if (window.amiriLoaded) return
+  try {
+    const response = await fetch('https://fonts.gstatic.com/s/amiri/v27/J7aRnpd8CGxBHqUpvrIw74NL.ttf')
+    const buffer = await response.arrayBuffer()
+    const bytes = new Uint8Array(buffer)
+    let binary = ''
+    bytes.forEach(b => binary += String.fromCharCode(b))
+    window.amiriBase64 = btoa(binary)
+    window.amiriLoaded = true
+  } catch(e) { console.error('Amiri load error', e) }
+}
+
 async function exporterPDF() {
+  await chargerPoliceAmiri()
   const { jsPDF } = window.jspdf
   const doc = new jsPDF()
 
+  if (window.amiriBase64) {
+    doc.addFileToVFS('Amiri-Regular.ttf', window.amiriBase64)
+    doc.addFont('Amiri-Regular.ttf', 'Amiri', 'normal')
+    doc.addFont('Amiri-Regular.ttf', 'Amiri', 'bold')
+  }
+
   const aujourd = new Date().toLocaleDateString('fr-FR')
-  const moisNoms = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre']
 
   const canvas = document.createElement('canvas')
-  canvas.width = 600
-  canvas.height = 600
+  canvas.width = 300
+  canvas.height = 300
   const ctx = canvas.getContext('2d')
   const img = new Image()
+  img.crossOrigin = 'anonymous'
   img.src = 'logo.png'
 
   await new Promise(resolve => {
     img.onload = () => {
       try {
         ctx.beginPath()
-        ctx.arc(40, 40, 40, 0, Math.PI * 2)
+        ctx.arc(150, 150, 150, 0, Math.PI * 2)
         ctx.clip()
-        ctx.drawImage(img, 0, 0, 600, 600)
+        ctx.drawImage(img, 0, 0, 300, 300)
       } catch(e) {}
       resolve()
     }
     img.onerror = resolve
-    img.crossOrigin = 'anonymous'
   })
 
   let logoData = null
@@ -1030,9 +1049,10 @@ async function exporterPDF() {
   doc.text('KMC TEAM MANAGER', 50, 18)
   doc.setFontSize(10)
   doc.setTextColor(107, 114, 128)
+  doc.setFont('Amiri', 'normal')
   doc.text(`Rapport du ${aujourd}`, 50, 28)
   doc.setTextColor(30, 120, 220)
-  doc.text('KMC — Khemis Miliana Cycling', 50, 36)
+  doc.text('KMC - Khemis Miliana Cycling', 50, 36)
 
   doc.setTextColor(30, 120, 220)
   doc.setFontSize(13)
@@ -1051,13 +1071,13 @@ async function exporterPDF() {
   doc.setFont('Amiri', 'normal')
   doc.text(`Km ce mois : ${kmTotal} km`, 14, 73)
   doc.text(`Membres actifs : ${membres}`, 14, 83)
-  doc.text(`Courses à venir : ${courses}`, 110, 73)
-  doc.text(`Parcours enregistrés : ${parcours}`, 110, 83)
+  doc.text(`Courses a venir : ${courses}`, 110, 73)
+  doc.text(`Parcours enregistres : ${parcours}`, 110, 83)
 
   doc.setTextColor(30, 120, 220)
   doc.setFontSize(13)
   doc.setFont('Amiri', 'bold')
-  doc.text('CLASSEMENT — KM CE MOIS', 14, 100)
+  doc.text('CLASSEMENT - KM CE MOIS', 14, 100)
   doc.setDrawColor(30, 120, 220)
   doc.line(14, 103, 196, 103)
 
@@ -1074,7 +1094,7 @@ async function exporterPDF() {
   doc.text('Rang', 16, 112)
   doc.text('Nom', 35, 112)
   doc.text('Date naissance', 95, 112)
-  doc.text('Catégorie', 145, 112)
+  doc.text('Categorie', 145, 112)
   doc.text('Licence', 175, 112)
 
   doc.setFont('Amiri', 'normal')
@@ -1105,7 +1125,7 @@ async function exporterPDF() {
     doc.setTextColor(30, 120, 220)
     doc.setFontSize(13)
     doc.setFont('Amiri', 'bold')
-    doc.text('ÉVÉNEMENTS', 14, y + 15)
+    doc.text('EVENEMENTS', 14, y + 15)
     doc.setDrawColor(30, 120, 220)
     doc.line(14, y + 18, 196, y + 18)
     y += 28
@@ -1115,7 +1135,7 @@ async function exporterPDF() {
     evenements_data.forEach(evt => {
       const date = new Date(evt.date).toLocaleDateString('fr-FR')
       doc.setTextColor(0, 0, 0)
-      doc.text(`${date} — ${evt.nom} (${evt.type}) — ${evt.lieu || ''} — ${evt.distance_km || ''} km`, 14, y)
+      doc.text(`${date} - ${evt.nom} (${evt.type}) - ${evt.lieu || ''} - ${evt.distance_km || ''} km`, 14, y)
       y += 8
       if (y > 270) { doc.addPage(); y = 20 }
     })
@@ -1125,10 +1145,167 @@ async function exporterPDF() {
   doc.rect(0, 285, 210, 12, 'F')
   doc.setTextColor(30, 120, 220)
   doc.setFontSize(8)
-  doc.text('KMC — Khemis Miliana Cycling Team Manager', 14, 292)
-  doc.text(`Généré le ${aujourd}`, 160, 292)
+  doc.text('KMC - Khemis Miliana Cycling Team Manager', 14, 292)
+  doc.text(`Genere le ${aujourd}`, 160, 292)
 
   doc.save(`KMC_Rapport_${aujourd.replace(/\//g, '-')}.pdf`)
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const btnExport = document.getElementById('btn-export')
+  if (btnExport) btnExport.onclick = exporterPDF
+})
+
+async function exporterEngagement() {
+  await chargerPoliceAmiri()
+  const { jsPDF } = window.jspdf
+  const doc = new jsPDF()
+
+  if (window.amiriBase64) {
+    doc.addFileToVFS('Amiri-Regular.ttf', window.amiriBase64)
+    doc.addFont('Amiri-Regular.ttf', 'Amiri', 'normal')
+    doc.addFont('Amiri-Regular.ttf', 'Amiri', 'bold')
+  }
+
+  const competition = document.getElementById('eng-competition').value.trim() || 'Competition'
+  const nature = document.getElementById('eng-nature').value.trim() || ''
+  const date = document.getElementById('eng-date').value
+  const lieu = document.getElementById('eng-lieu').value.trim()
+  const organisateur = document.getElementById('eng-organisateur').value.trim() || 'FAC/DJSL/LAC'
+  const entraineur = document.getElementById('eng-entraineur').value.trim()
+  const categorie = document.getElementById('eng-categorie').value
+  const dateAff = date ? new Date(date).toLocaleDateString('fr-FR') : ''
+
+  const loadLogo = (src) => new Promise(resolve => {
+    const canvas = document.createElement('canvas')
+    canvas.width = 300; canvas.height = 300
+    const ctx = canvas.getContext('2d')
+    const img = new Image()
+    img.crossOrigin = 'anonymous'
+    img.onload = () => {
+      try {
+        ctx.beginPath()
+        ctx.arc(150, 150, 150, 0, Math.PI * 2)
+        ctx.clip()
+        ctx.drawImage(img, 0, 0, 300, 300)
+      } catch(e) {}
+      try { resolve(canvas.toDataURL('image/png')) } catch(e) { resolve(null) }
+    }
+    img.onerror = () => resolve(null)
+    img.src = src
+  })
+
+  const logo1 = await loadLogo('logo.png')
+  if (logo1) { try { doc.addImage(logo1, 'PNG', 8, 4, 35, 35) } catch(e) {} }
+
+  doc.setTextColor(30, 120, 220)
+  doc.setFontSize(10)
+  doc.setFont('Amiri', 'bold')
+  doc.text('Club KMC - Khemis Miliana Cycling', 105, 12, { align: 'center' })
+  doc.text('Wilaya Ain Defla - Algerie', 105, 19, { align: 'center' })
+
+  const arabicCanvas = document.createElement('canvas')
+  arabicCanvas.width = 500
+  arabicCanvas.height = 32
+  const arabicCtx = arabicCanvas.getContext('2d')
+  arabicCtx.fillStyle = '#1e78dc'
+  arabicCtx.font = 'bold 20px Arial'
+  arabicCtx.textAlign = 'center'
+  arabicCtx.direction = 'rtl'
+  arabicCtx.fillText('النادي الرياضي خميس مليانة للدراجات الهوائية', 250, 24)
+  let arabicData = null
+  try { arabicData = arabicCanvas.toDataURL('image/png') } catch(e) {}
+  if (arabicData) { try { doc.addImage(arabicData, 'PNG', 50, 24, 110, 8) } catch(e) {} }
+
+  doc.setTextColor(0, 0, 0)
+  doc.setFontSize(24)
+  doc.setFont('Amiri', 'bold')
+  doc.text('ENGAGEMENT', 105, 46, { align: 'center' })
+
+  doc.setFontSize(10)
+  doc.setFont('Amiri', 'bold')
+  doc.text(`Competition : ${competition}`, 14, 58)
+  doc.setFont('Amiri', 'normal')
+  doc.text(`Date : ${dateAff}`, 14, 67)
+  doc.text(`Lieu : ${lieu}`, 110, 67)
+  doc.setFont('Amiri', 'bold')
+  doc.text(`Organisateurs : ${organisateur}`, 14, 76)
+  doc.text(`Nature de l'evenement : ${nature}`, 14, 85)
+  doc.text('Club : K.M.C KHEMIS MILIANA CYCLING', 14, 94)
+  doc.text('Wilaya Ain Defla', 116, 94)
+  if (categorie) doc.text(`Categorie : ${categorie.toUpperCase()}`, 160, 94)
+  doc.text(`Entraineur : ${entraineur}`, 14, 103)
+  doc.setFont('Amiri', 'bold')
+  doc.text('LISTE DES COUREURS', 14, 113)
+
+  let query = db.from('membres').select('nom, num_licence, date_naissance, categorie')
+  if (categorie) query = query.eq('categorie', categorie)
+  query = query.order('nom', { ascending: true })
+  const { data: coureurs } = await query
+
+  const rowH = 10
+  let y = 118
+
+  const colDos = 14
+  const colNom = 30
+  const colLic = 118
+  const colDob = 150
+  const colEm = 178
+  const endCol = 196
+
+  const drawRow = (yy) => {
+    doc.rect(colDos, yy, endCol - colDos, rowH)
+    doc.line(colNom, yy, colNom, yy + rowH)
+    doc.line(colLic, yy, colLic, yy + rowH)
+    doc.line(colDob, yy, colDob, yy + rowH)
+    doc.line(colEm, yy, colEm, yy + rowH)
+  }
+
+  doc.setFillColor(200, 200, 200)
+  doc.rect(colDos, y, endCol - colDos, rowH, 'F')
+  doc.setDrawColor(0)
+  doc.setLineWidth(0.3)
+  drawRow(y)
+  doc.setFontSize(8)
+  doc.setFont('Amiri', 'bold')
+  doc.text('N Dos', colDos + 1, y + 7)
+  doc.text('Nom et Prenoms', colNom + 1, y + 7)
+  doc.text('N Licence', colLic + 1, y + 7)
+  doc.text('Date naissance', colDob + 1, y + 7)
+  doc.text('Emargement', colEm + 1, y + 7)
+  y += rowH
+
+  doc.setFont('Amiri', 'normal')
+  coureurs.forEach((c) => {
+    const dob = c.date_naissance ? new Date(c.date_naissance).toLocaleDateString('fr-FR') : ''
+    drawRow(y)
+    doc.text((c.nom || '').substring(0, 22), colNom + 1, y + 7)
+    doc.text(c.num_licence || '', colLic + 1, y + 7)
+    doc.text(dob, colDob + 1, y + 7)
+    y += rowH
+    if (y > 265) { doc.addPage(); y = 20 }
+  })
+
+  y += 15
+  doc.setFont('Amiri', 'bold')
+  doc.setFontSize(12)
+  doc.text('President du club', 150, y)
+
+  doc.setFont('Amiri', 'normal')
+  doc.setFontSize(9)
+  doc.setTextColor(100, 100, 100)
+  doc.text('KMC.cyclisme@gmail.com', 14, 287)
+  doc.text('Tel : 0555099086 - 0659014436 - 0661668666', 105, 287, { align: 'center' })
+
+  document.getElementById('eng-competition').value = ''
+  document.getElementById('eng-nature').value = ''
+  document.getElementById('eng-date').value = ''
+  document.getElementById('eng-lieu').value = ''
+  document.getElementById('eng-organisateur').value = ''
+  document.getElementById('eng-entraineur').value = ''
+  document.getElementById('eng-categorie').value = ''
+
+  doc.save(`KMC_Engagement_${categorie || 'Tous'}_${dateAff.replace(/\//g,'-') || 'date'}.pdf`)
 }
 
 document.addEventListener('DOMContentLoaded', () => {
