@@ -1184,9 +1184,6 @@ async function exporterEngagement() {
       try {
         ctx.fillStyle = '#ffffff'
         ctx.fillRect(0, 0, 200, 200)
-        ctx.beginPath()
-        ctx.arc(100, 100, 100, 0, Math.PI * 2)
-        ctx.clip()
         ctx.drawImage(img, 0, 0, 200, 200)
       } catch(e) {}
       try { resolve(canvas.toDataURL('image/png')) } catch(e) { resolve(null) }
@@ -1244,7 +1241,7 @@ async function exporterEngagement() {
   query = query.order('nom', { ascending: true })
   const { data: coureurs } = await query
 
-  const rowH = 8
+  const rowH = 7
   let y = 118
 
   const colDos = 14
@@ -1269,20 +1266,20 @@ async function exporterEngagement() {
   drawRow(y)
   doc.setFontSize(8)
   doc.setFont('helvetica', 'bold')
-  doc.text('N Dos', colDos + 1, y + 6)
-  doc.text('Nom et Prenoms', colNom + 1, y + 6)
-  doc.text('N Licence', colLic + 1, y + 6)
-  doc.text('Date naissance', colDob + 1, y + 6)
-  doc.text('Emargement', colEm + 1, y + 6)
+  doc.text('N Dos', colDos + 1, y + 5)
+  doc.text('Nom et Prenoms', colNom + 1, y + 5)
+  doc.text('N Licence', colLic + 1, y + 5)
+  doc.text('Date naissance', colDob + 1, y + 5)
+  doc.text('Emargement', colEm + 1, y + 5)
   y += rowH
 
   doc.setFont('helvetica', 'normal')
   coureurs.forEach((c) => {
     const dob = c.date_naissance ? new Date(c.date_naissance).toLocaleDateString('fr-FR') : ''
     drawRow(y)
-    doc.text((c.nom || '').substring(0, 22), colNom + 1, y + 6)
-    doc.text(c.num_licence || '', colLic + 1, y + 6)
-    doc.text(dob, colDob + 1, y + 6)
+    doc.text((c.nom || '').substring(0, 22), colNom + 1, y + 5)
+    doc.text(c.num_licence || '', colLic + 1, y + 5)
+    doc.text(dob, colDob + 1, y + 5)
     y += rowH
     if (y > 265) { doc.addPage(); y = 20 }
   })
