@@ -1294,7 +1294,7 @@ async function exporterEngagement() {
   })
 
   const logo1 = await loadLogo('logo.png')
-  if (logo1) { try { doc.addImage(logo1, 'PNG', 10, 6, 28, 28) } catch(e) {} }
+  if (logo1) { try { doc.addImage(logo1, 'PNG', 8, 4, 35, 35) } catch(e) {} }
 
   // Texte français en haut au centre
   doc.setTextColor(30, 120, 220)
