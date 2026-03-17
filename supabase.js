@@ -996,8 +996,8 @@ async function exporterPDF() {
   const moisNoms = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre']
 
   const canvas = document.createElement('canvas')
-  canvas.width = 300
-  canvas.height = 300
+  canvas.width = 600
+  canvas.height = 600
   const ctx = canvas.getContext('2d')
   const img = new Image()
   img.src = 'logo.png'
@@ -1008,7 +1008,7 @@ async function exporterPDF() {
         ctx.beginPath()
         ctx.arc(40, 40, 40, 0, Math.PI * 2)
         ctx.clip()
-        ctx.drawImage(img, 0, 0, 300, 300)
+        ctx.drawImage(img, 0, 0, 600, 600)
       } catch(e) {}
       resolve()
     }
@@ -1282,10 +1282,9 @@ async function exporterEngagement() {
     img.crossOrigin = 'anonymous'
     img.onload = () => {
       try {
-        ctx.beginPath()
-        ctx.arc(40, 40, 40, 0, Math.PI * 2)
-        ctx.clip()
-        ctx.drawImage(img, 0, 0, 80, 80)
+        ctx.fillStyle = '#ffffff'
+        ctx.fillRect(0, 0, 300, 300)
+        ctx.drawImage(img, 0, 0, 300, 300)
       } catch(e) {}
       try { resolve(canvas.toDataURL('image/png')) } catch(e) { resolve(null) }
     }
