@@ -1026,7 +1026,7 @@ async function exporterPDF() {
 
   doc.setTextColor(30, 120, 220)
   doc.setFontSize(22)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont('Amiri', 'bold')
   doc.text('KMC TEAM MANAGER', 50, 18)
   doc.setFontSize(10)
   doc.setTextColor(107, 114, 128)
@@ -1036,7 +1036,7 @@ async function exporterPDF() {
 
   doc.setTextColor(30, 120, 220)
   doc.setFontSize(13)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont('Amiri', 'bold')
   doc.text('STATISTIQUES DU CLUB', 14, 58)
   doc.setDrawColor(30, 120, 220)
   doc.line(14, 61, 196, 61)
@@ -1048,7 +1048,7 @@ async function exporterPDF() {
 
   doc.setTextColor(0, 0, 0)
   doc.setFontSize(11)
-  doc.setFont('helvetica', 'normal')
+  doc.setFont('Amiri', 'normal')
   doc.text(`Km ce mois : ${kmTotal} km`, 14, 73)
   doc.text(`Membres actifs : ${membres}`, 14, 83)
   doc.text(`Courses à venir : ${courses}`, 110, 73)
@@ -1056,7 +1056,7 @@ async function exporterPDF() {
 
   doc.setTextColor(30, 120, 220)
   doc.setFontSize(13)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont('Amiri', 'bold')
   doc.text('CLASSEMENT — KM CE MOIS', 14, 100)
   doc.setDrawColor(30, 120, 220)
   doc.line(14, 103, 196, 103)
@@ -1069,7 +1069,7 @@ async function exporterPDF() {
   doc.setFillColor(30, 120, 220)
   doc.rect(14, 106, 182, 8, 'F')
   doc.setTextColor(255, 255, 255)
-  doc.setFont('helvetica', 'bold')
+  doc.setFont('Amiri', 'bold')
   doc.setFontSize(10)
   doc.text('Rang', 16, 112)
   doc.text('Nom', 35, 112)
@@ -1077,7 +1077,7 @@ async function exporterPDF() {
   doc.text('Catégorie', 145, 112)
   doc.text('Licence', 175, 112)
 
-  doc.setFont('helvetica', 'normal')
+  doc.setFont('Amiri', 'normal')
   let y = 122
   membres_data.forEach((m, i) => {
     if (i % 2 === 0) {
@@ -1104,13 +1104,13 @@ async function exporterPDF() {
     if (y > 220) { doc.addPage(); y = 20 }
     doc.setTextColor(30, 120, 220)
     doc.setFontSize(13)
-    doc.setFont('helvetica', 'bold')
+    doc.setFont('Amiri', 'bold')
     doc.text('ÉVÉNEMENTS', 14, y + 15)
     doc.setDrawColor(30, 120, 220)
     doc.line(14, y + 18, 196, y + 18)
     y += 28
 
-    doc.setFont('helvetica', 'normal')
+    doc.setFont('Amiri', 'normal')
     doc.setFontSize(10)
     evenements_data.forEach(evt => {
       const date = new Date(evt.date).toLocaleDateString('fr-FR')
@@ -1241,9 +1241,29 @@ async function sauvegarderModal() {
   chargerGraphique()
 }
 
+async function chargerPoliceAmiri() {
+  if (window.amiriLoaded) return
+  try {
+    const response = await fetch('https://fonts.gstatic.com/s/amiri/v27/J7aRnpd8CGxBHqUpvrIw74NL.ttf')
+    const buffer = await response.arrayBuffer()
+    const bytes = new Uint8Array(buffer)
+    let binary = ''
+    bytes.forEach(b => binary += String.fromCharCode(b))
+    window.amiriBase64 = btoa(binary)
+    window.amiriLoaded = true
+  } catch(e) { console.error('Amiri load error', e) }
+}
+
 async function exporterEngagement() {
+  await chargerPoliceAmiri()
   const { jsPDF } = window.jspdf
   const doc = new jsPDF()
+
+  if (window.amiriBase64) {
+    doc.addFileToVFS('Amiri-Regular.ttf', window.amiriBase64)
+    doc.addFont('Amiri-Regular.ttf', 'Amiri', 'normal')
+    doc.addFont('Amiri-Regular.ttf', 'Amiri', 'bold')
+  }
 
   const competition = document.getElementById('eng-competition').value.trim() || 'Compétition'
   const nature = document.getElementById('eng-nature').value.trim() || ''
@@ -1274,23 +1294,36 @@ async function exporterEngagement() {
   })
 
   const logo1 = await loadLogo('logo.png')
-
   if (logo1) { try { doc.addImage(logo1, 'PNG', 10, 6, 28, 28) } catch(e) {} }
 
+  // Texte français en haut au centre
   doc.setTextColor(30, 120, 220)
   doc.setFontSize(10)
   doc.setFont('helvetica', 'bold')
   doc.text('Club KMC - Khemis Miliana Cycling', 105, 12, { align: 'center' })
   doc.text('Wilaya Ain Defla - Algerie', 105, 19, { align: 'center' })
-  doc.text('Club KMC - Khemis Miliana Cycling', 105, 12, { align: 'center' })
-  doc.text('Wilaya Ain Defla - Algerie', 105, 19, { align: 'center' })
-  doc.text('Nadie Riadhi Khemis Miliana lil Darajat', 105, 26, { align: 'center' })
 
+  // Texte arabe via canvas
+  const arabicCanvas = document.createElement('canvas')
+  arabicCanvas.width = 500
+  arabicCanvas.height = 32
+  const arabicCtx = arabicCanvas.getContext('2d')
+  arabicCtx.fillStyle = '#1e78dc'
+  arabicCtx.font = 'bold 20px Arial'
+  arabicCtx.textAlign = 'center'
+  arabicCtx.direction = 'rtl'
+  arabicCtx.fillText('النادي الرياضي خميس مليانة للدراجات الهوائية', 250, 24)
+  let arabicData = null
+  try { arabicData = arabicCanvas.toDataURL('image/png') } catch(e) {}
+  if (arabicData) { try { doc.addImage(arabicData, 'PNG', 50, 24, 110, 8) } catch(e) {} }
+
+  // Titre ENGAGEMENT
   doc.setTextColor(0, 0, 0)
   doc.setFontSize(24)
   doc.setFont('helvetica', 'bold')
   doc.text('ENGAGEMENT', 105, 46, { align: 'center' })
 
+  // Informations compétition
   doc.setFontSize(10)
   doc.setFont('helvetica', 'bold')
   doc.text(`Competition : ${competition}`, 14, 58)
@@ -1307,12 +1340,13 @@ async function exporterEngagement() {
   doc.setFont('helvetica', 'bold')
   doc.text('LISTE DES COUREURS', 14, 113)
 
+  // Requête membres
   let query = db.from('membres').select('nom, num_licence, date_naissance, categorie')
   if (categorie) query = query.eq('categorie', categorie)
   query = query.order('nom', { ascending: true })
   const { data: coureurs } = await query
 
-const rowH = 10
+  const rowH = 10
   let y = 118
 
   const colDos = 14
@@ -1322,14 +1356,15 @@ const rowH = 10
   const colEm = 178
   const endCol = 196
 
-  const drawRow = (y) => {
-    doc.rect(colDos, y, endCol - colDos, rowH)
-    doc.line(colNom, y, colNom, y + rowH)
-    doc.line(colLic, y, colLic, y + rowH)
-    doc.line(colDob, y, colDob, y + rowH)
-    doc.line(colEm, y, colEm, y + rowH)
+  const drawRow = (yy) => {
+    doc.rect(colDos, yy, endCol - colDos, rowH)
+    doc.line(colNom, yy, colNom, yy + rowH)
+    doc.line(colLic, yy, colLic, yy + rowH)
+    doc.line(colDob, yy, colDob, yy + rowH)
+    doc.line(colEm, yy, colEm, yy + rowH)
   }
 
+  // Header tableau
   doc.setFillColor(200, 200, 200)
   doc.rect(colDos, y, endCol - colDos, rowH, 'F')
   doc.setDrawColor(0)
@@ -1344,8 +1379,9 @@ const rowH = 10
   doc.text('Emargement', colEm + 1, y + 7)
   y += rowH
 
+  // Lignes membres
   doc.setFont('helvetica', 'normal')
-  coureurs.forEach((c, i) => {
+  coureurs.forEach((c) => {
     const dob = c.date_naissance ? new Date(c.date_naissance).toLocaleDateString('fr-FR') : ''
     drawRow(y)
     doc.text((c.nom || '').substring(0, 22), colNom + 1, y + 7)
@@ -1355,17 +1391,20 @@ const rowH = 10
     if (y > 265) { doc.addPage(); y = 20 }
   })
 
+  // Signature
   y += 15
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(12)
   doc.text('President du club', 150, y)
 
+  // Pied de page
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(9)
   doc.setTextColor(100, 100, 100)
   doc.text('KMC.cyclisme@gmail.com', 14, 287)
   doc.text('Tel : 0555099086 - 0659014436 - 0661668666', 105, 287, { align: 'center' })
 
+  // Vider les champs
   document.getElementById('eng-competition').value = ''
   document.getElementById('eng-nature').value = ''
   document.getElementById('eng-date').value = ''
