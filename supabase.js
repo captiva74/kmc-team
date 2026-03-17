@@ -1182,7 +1182,8 @@ async function exporterEngagement() {
     img.crossOrigin = 'anonymous'
     img.onload = () => {
       try {
-        ctx.clearRect(0, 0, 200, 200)
+        ctx.fillStyle = '#ffffff'
+        ctx.fillRect(0, 0, 200, 200)
         ctx.beginPath()
         ctx.arc(100, 100, 100, 0, Math.PI * 2)
         ctx.clip()
@@ -1469,7 +1470,6 @@ async function exporterEngagement() {
   })
 
   const logo1 = await loadLogo('logo.png')
-  const logo3 = await loadLogo('logo3.png')
   if (logo1) { try { doc.addImage(logo1, 'PNG', 8, 4, 35, 35) } catch(e) {} }
 
   // Texte français en haut au centre
@@ -1572,9 +1572,6 @@ async function exporterEngagement() {
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(12)
   doc.text('President du club', 140, y)
-  if (logo3) {
-    try { doc.addImage(logo3, 'PNG', 120, y + 3, 70, 35) } catch(e) {}
-  }
 
   // Pied de page
   doc.setFont('helvetica', 'normal')
