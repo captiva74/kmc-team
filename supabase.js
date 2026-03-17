@@ -1014,29 +1014,27 @@ async function exporterPDF() {
 
   const aujourd = new Date().toLocaleDateString('fr-FR')
 
-  const canvas = document.createElement('canvas')
-  canvas.width = 300
-  canvas.height = 300
-  const ctx = canvas.getContext('2d')
-  const img = new Image()
-  img.crossOrigin = 'anonymous'
-  img.src = 'logo.png'
-
-  await new Promise(resolve => {
+  const loadLogoRond = (src) => new Promise(resolve => {
+    const canvas = document.createElement('canvas')
+    canvas.width = 200; canvas.height = 200
+    const ctx = canvas.getContext('2d')
+    const img = new Image()
+    img.crossOrigin = 'anonymous'
     img.onload = () => {
       try {
+        ctx.clearRect(0, 0, 200, 200)
         ctx.beginPath()
-        ctx.arc(150, 150, 150, 0, Math.PI * 2)
+        ctx.arc(100, 100, 100, 0, Math.PI * 2)
         ctx.clip()
-        ctx.drawImage(img, 0, 0, 300, 300)
+        ctx.drawImage(img, 0, 0, 200, 200)
       } catch(e) {}
-      resolve()
+      try { resolve(canvas.toDataURL('image/png')) } catch(e) { resolve(null) }
     }
-    img.onerror = resolve
+    img.onerror = () => resolve(null)
+    img.src = src
   })
 
-  let logoData = null
-  try { logoData = canvas.toDataURL('image/png') } catch(e) {}
+  const logoData = await loadLogoRond('logo.png')
 
   doc.setFillColor(13, 15, 20)
   doc.rect(0, 0, 210, 45, 'F')
@@ -1045,18 +1043,18 @@ async function exporterPDF() {
 
   doc.setTextColor(30, 120, 220)
   doc.setFontSize(22)
-  doc.setFont('Amiri', 'bold')
+  doc.setFont('helvetica', 'bold')
   doc.text('KMC TEAM MANAGER', 50, 18)
   doc.setFontSize(10)
   doc.setTextColor(107, 114, 128)
-  doc.setFont('Amiri', 'normal')
+  doc.setFont('helvetica', 'normal')
   doc.text(`Rapport du ${aujourd}`, 50, 28)
   doc.setTextColor(30, 120, 220)
   doc.text('KMC - Khemis Miliana Cycling', 50, 36)
 
   doc.setTextColor(30, 120, 220)
   doc.setFontSize(13)
-  doc.setFont('Amiri', 'bold')
+  doc.setFont('helvetica', 'bold')
   doc.text('STATISTIQUES DU CLUB', 14, 58)
   doc.setDrawColor(30, 120, 220)
   doc.line(14, 61, 196, 61)
@@ -1068,7 +1066,7 @@ async function exporterPDF() {
 
   doc.setTextColor(0, 0, 0)
   doc.setFontSize(11)
-  doc.setFont('Amiri', 'normal')
+  doc.setFont('helvetica', 'normal')
   doc.text(`Km ce mois : ${kmTotal} km`, 14, 73)
   doc.text(`Membres actifs : ${membres}`, 14, 83)
   doc.text(`Courses a venir : ${courses}`, 110, 73)
@@ -1076,7 +1074,7 @@ async function exporterPDF() {
 
   doc.setTextColor(30, 120, 220)
   doc.setFontSize(13)
-  doc.setFont('Amiri', 'bold')
+  doc.setFont('helvetica', 'bold')
   doc.text('CLASSEMENT - KM CE MOIS', 14, 100)
   doc.setDrawColor(30, 120, 220)
   doc.line(14, 103, 196, 103)
@@ -1089,7 +1087,7 @@ async function exporterPDF() {
   doc.setFillColor(30, 120, 220)
   doc.rect(14, 106, 182, 8, 'F')
   doc.setTextColor(255, 255, 255)
-  doc.setFont('Amiri', 'bold')
+  doc.setFont('helvetica', 'bold')
   doc.setFontSize(10)
   doc.text('Rang', 16, 112)
   doc.text('Nom', 35, 112)
@@ -1097,7 +1095,7 @@ async function exporterPDF() {
   doc.text('Categorie', 145, 112)
   doc.text('Licence', 175, 112)
 
-  doc.setFont('Amiri', 'normal')
+  doc.setFont('helvetica', 'normal')
   let y = 122
   membres_data.forEach((m, i) => {
     if (i % 2 === 0) {
@@ -1124,13 +1122,13 @@ async function exporterPDF() {
     if (y > 220) { doc.addPage(); y = 20 }
     doc.setTextColor(30, 120, 220)
     doc.setFontSize(13)
-    doc.setFont('Amiri', 'bold')
+    doc.setFont('helvetica', 'bold')
     doc.text('EVENEMENTS', 14, y + 15)
     doc.setDrawColor(30, 120, 220)
     doc.line(14, y + 18, 196, y + 18)
     y += 28
 
-    doc.setFont('Amiri', 'normal')
+    doc.setFont('helvetica', 'normal')
     doc.setFontSize(10)
     evenements_data.forEach(evt => {
       const date = new Date(evt.date).toLocaleDateString('fr-FR')
@@ -1176,18 +1174,19 @@ async function exporterEngagement() {
   const categorie = document.getElementById('eng-categorie').value
   const dateAff = date ? new Date(date).toLocaleDateString('fr-FR') : ''
 
-  const loadLogo = (src) => new Promise(resolve => {
+  const loadLogoRond = (src) => new Promise(resolve => {
     const canvas = document.createElement('canvas')
-    canvas.width = 300; canvas.height = 300
+    canvas.width = 200; canvas.height = 200
     const ctx = canvas.getContext('2d')
     const img = new Image()
     img.crossOrigin = 'anonymous'
     img.onload = () => {
       try {
+        ctx.clearRect(0, 0, 200, 200)
         ctx.beginPath()
-        ctx.arc(150, 150, 150, 0, Math.PI * 2)
+        ctx.arc(100, 100, 100, 0, Math.PI * 2)
         ctx.clip()
-        ctx.drawImage(img, 0, 0, 300, 300)
+        ctx.drawImage(img, 0, 0, 200, 200)
       } catch(e) {}
       try { resolve(canvas.toDataURL('image/png')) } catch(e) { resolve(null) }
     }
@@ -1195,12 +1194,12 @@ async function exporterEngagement() {
     img.src = src
   })
 
-  const logo1 = await loadLogo('logo.png')
+  const logo1 = await loadLogoRond('logo.png')
   if (logo1) { try { doc.addImage(logo1, 'PNG', 8, 4, 35, 35) } catch(e) {} }
 
   doc.setTextColor(30, 120, 220)
   doc.setFontSize(10)
-  doc.setFont('Amiri', 'bold')
+  doc.setFont('helvetica', 'bold')
   doc.text('Club KMC - Khemis Miliana Cycling', 105, 12, { align: 'center' })
   doc.text('Wilaya Ain Defla - Algerie', 105, 19, { align: 'center' })
 
@@ -1208,6 +1207,7 @@ async function exporterEngagement() {
   arabicCanvas.width = 500
   arabicCanvas.height = 32
   const arabicCtx = arabicCanvas.getContext('2d')
+  arabicCtx.clearRect(0, 0, 500, 32)
   arabicCtx.fillStyle = '#1e78dc'
   arabicCtx.font = 'bold 20px Arial'
   arabicCtx.textAlign = 'center'
@@ -1219,23 +1219,23 @@ async function exporterEngagement() {
 
   doc.setTextColor(0, 0, 0)
   doc.setFontSize(24)
-  doc.setFont('Amiri', 'bold')
+  doc.setFont('helvetica', 'bold')
   doc.text('ENGAGEMENT', 105, 46, { align: 'center' })
 
   doc.setFontSize(10)
-  doc.setFont('Amiri', 'bold')
+  doc.setFont('helvetica', 'bold')
   doc.text(`Competition : ${competition}`, 14, 58)
-  doc.setFont('Amiri', 'normal')
+  doc.setFont('helvetica', 'normal')
   doc.text(`Date : ${dateAff}`, 14, 67)
   doc.text(`Lieu : ${lieu}`, 110, 67)
-  doc.setFont('Amiri', 'bold')
+  doc.setFont('helvetica', 'bold')
   doc.text(`Organisateurs : ${organisateur}`, 14, 76)
   doc.text(`Nature de l'evenement : ${nature}`, 14, 85)
   doc.text('Club : K.M.C KHEMIS MILIANA CYCLING', 14, 94)
   doc.text('Wilaya Ain Defla', 116, 94)
   if (categorie) doc.text(`Categorie : ${categorie.toUpperCase()}`, 160, 94)
   doc.text(`Entraineur : ${entraineur}`, 14, 103)
-  doc.setFont('Amiri', 'bold')
+  doc.setFont('helvetica', 'bold')
   doc.text('LISTE DES COUREURS', 14, 113)
 
   let query = db.from('membres').select('nom, num_licence, date_naissance, categorie')
@@ -1243,7 +1243,7 @@ async function exporterEngagement() {
   query = query.order('nom', { ascending: true })
   const { data: coureurs } = await query
 
-  const rowH = 10
+  const rowH = 8
   let y = 118
 
   const colDos = 14
@@ -1267,31 +1267,31 @@ async function exporterEngagement() {
   doc.setLineWidth(0.3)
   drawRow(y)
   doc.setFontSize(8)
-  doc.setFont('Amiri', 'bold')
-  doc.text('N Dos', colDos + 1, y + 7)
-  doc.text('Nom et Prenoms', colNom + 1, y + 7)
-  doc.text('N Licence', colLic + 1, y + 7)
-  doc.text('Date naissance', colDob + 1, y + 7)
-  doc.text('Emargement', colEm + 1, y + 7)
+  doc.setFont('helvetica', 'bold')
+  doc.text('N Dos', colDos + 1, y + 6)
+  doc.text('Nom et Prenoms', colNom + 1, y + 6)
+  doc.text('N Licence', colLic + 1, y + 6)
+  doc.text('Date naissance', colDob + 1, y + 6)
+  doc.text('Emargement', colEm + 1, y + 6)
   y += rowH
 
-  doc.setFont('Amiri', 'normal')
+  doc.setFont('helvetica', 'normal')
   coureurs.forEach((c) => {
     const dob = c.date_naissance ? new Date(c.date_naissance).toLocaleDateString('fr-FR') : ''
     drawRow(y)
-    doc.text((c.nom || '').substring(0, 22), colNom + 1, y + 7)
-    doc.text(c.num_licence || '', colLic + 1, y + 7)
-    doc.text(dob, colDob + 1, y + 7)
+    doc.text((c.nom || '').substring(0, 22), colNom + 1, y + 6)
+    doc.text(c.num_licence || '', colLic + 1, y + 6)
+    doc.text(dob, colDob + 1, y + 6)
     y += rowH
     if (y > 265) { doc.addPage(); y = 20 }
   })
 
   y += 15
-  doc.setFont('Amiri', 'bold')
+  doc.setFont('helvetica', 'bold')
   doc.setFontSize(12)
   doc.text('President du club', 150, y)
 
-  doc.setFont('Amiri', 'normal')
+  doc.setFont('helvetica', 'normal')
   doc.setFontSize(9)
   doc.setTextColor(100, 100, 100)
   doc.text('KMC.cyclisme@gmail.com', 14, 287)
@@ -1307,7 +1307,6 @@ async function exporterEngagement() {
 
   doc.save(`KMC_Engagement_${categorie || 'Tous'}_${dateAff.replace(/\//g,'-') || 'date'}.pdf`)
 }
-
 document.addEventListener('DOMContentLoaded', () => {
   const btnExport = document.getElementById('btn-export')
   if (btnExport) btnExport.onclick = exporterPDF
