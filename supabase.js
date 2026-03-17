@@ -1292,26 +1292,8 @@ async function exporterEngagement() {
     img.src = src
   })
 
-    const loadImage = (src) => new Promise(resolve => {
-    const canvas = document.createElement('canvas')
-    canvas.width = 800; canvas.height = 400
-    const ctx = canvas.getContext('2d')
-    const img = new Image()
-    img.crossOrigin = 'anonymous'
-    img.onload = () => {
-      try {
-        ctx.fillStyle = '#ffffff'
-        ctx.fillRect(0, 0, 800, 400)
-        ctx.drawImage(img, 0, 0, 800, 400)
-      } catch(e) {}
-      try { resolve(canvas.toDataURL('image/png')) } catch(e) { resolve(null) }
-    }
-    img.onerror = () => resolve(null)
-    img.src = src
-  })
-
   const logo1 = await loadLogo('logo.png')
-  const logo3 = await loadImage('logo3.png')
+  const logo3 = await loadLogo('logo3.png')
   if (logo1) { try { doc.addImage(logo1, 'PNG', 8, 4, 35, 35) } catch(e) {} }
 
   // Texte français en haut au centre
@@ -1415,7 +1397,7 @@ async function exporterEngagement() {
   doc.setFontSize(12)
   doc.text('President du club', 140, y)
   if (logo3) {
-    try { doc.addImage(logo3, 'PNG', 110, y + 2, 80, 40) } catch(e) {}
+    try { doc.addImage(logo3, 'PNG', 120, y + 3, 70, 35) } catch(e) {}
   }
 
   // Pied de page
