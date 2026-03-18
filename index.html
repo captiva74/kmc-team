@@ -627,6 +627,12 @@ function showPage(name) {
   requestAnimationFrame(() => { document.getElementById('page-' + name).style.animation = 'fadeUp 0.3s ease both'; });
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   event.currentTarget.classList.add('active');
+  const sidebar = document.querySelector('.sidebar')
+  const overlay = document.getElementById('sidebar-overlay')
+  if (sidebar.classList.contains('open')) {
+    sidebar.classList.remove('open')
+    overlay.style.display = 'none'
+  }
 }
 function switchTab(el, tabId) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
