@@ -1175,27 +1175,23 @@ async function exporterEngagement() {
   const categorie = document.getElementById('eng-categorie').value
   const dateAff = date ? new Date(date).toLocaleDateString('fr-FR') : ''
 
-const loadLogoRond = (src) => new Promise(resolve => {
+  const loadLogoRond = (src) => new Promise(resolve => {
     const canvas = document.createElement('canvas')
-    canvas.width = 200; canvas.height = 200
+    canvas.width = 300; canvas.height = 300
     const ctx = canvas.getContext('2d')
     const img = new Image()
+    img.src = src
     img.crossOrigin = 'anonymous'
     img.onload = () => {
       try {
-        ctx.fillStyle = '#ffffff'
-        ctx.fillRect(0, 0, 200, 200)
-        ctx.save()
         ctx.beginPath()
-        ctx.arc(100, 100, 100, 0, Math.PI * 2)
+        ctx.arc(40, 40, 40, 0, Math.PI * 2)
         ctx.clip()
-        ctx.drawImage(img, 0, 0, 200, 200)
-        ctx.restore()
+        ctx.drawImage(img, 0, 0, 300, 300)
       } catch(e) {}
       try { resolve(canvas.toDataURL('image/png')) } catch(e) { resolve(null) }
     }
     img.onerror = () => resolve(null)
-    img.src = src
   })
 
   const logo1 = await loadLogoRond('logo.png')
