@@ -11,7 +11,7 @@
   --bg:#0d0f14;--surface:#151820;--surface2:#1c2030;
   --accent:#e8ff47;--accent2:#ff6b35;--text:#f0f2f8;
   --muted:#6b7280;--border:#ffffff12;--radius:12px;
-}
+} 
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
 .app{display:flex;min-height:100vh}
 .sidebar{width:220px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:1.5rem 1rem;flex-shrink:0;height:100vh;overflow:hidden}
@@ -176,8 +176,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
       <button class="nav-item" onclick="showPage('calendrier');construireCalendrier()"><span class="nav-icon">▦</span>Calendrier</button>
       <button class="nav-item" onclick="showPage('classement')"><span class="nav-icon">▲</span>Classement</button>
       <button class="nav-item" onclick="showPage('parcours')"><span class="nav-icon">⊕</span>Parcours GPS</button>
-      <button class="nav-item" onclick="connecterStrava()" style="color:#fc4c02"><span class="nav-icon">🚴</span>Connecter Strava</button>
       <button class="nav-item" onclick="showPage('engagement')"><span class="nav-icon">📋</span>Engagement</button>
+      <button class="nav-item" onclick="connecterStrava()" style="color:#fc4c02"><span class="nav-icon">🚴</span>Connecter Strava</button>
     </div>
     <button class="nav-item" onclick="showPage('profil')"><span class="nav-icon">👤</span>Mon profil</button>
     <button class="nav-item" onclick="seDeconnecter()" style="color:#ff6b35;margin-top:8px"><span class="nav-icon">⏻</span>Déconnexion</button>
