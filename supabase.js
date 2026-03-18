@@ -1029,6 +1029,7 @@ async function exporterPDF() {
         logoCtx.fillRect(0, 0, 200, 200)
         logoCtx.beginPath()
         logoCtx.arc(100, 100, 100, 0, Math.PI * 2)
+        logoCtx.closePath()
         logoCtx.clip()
         logoCtx.drawImage(logoImg, 0, 0, 200, 200)
       } catch(e) {}
@@ -1177,21 +1178,23 @@ async function exporterEngagement() {
 
   const loadLogoRond = (src) => new Promise(resolve => {
     const canvas = document.createElement('canvas')
-    canvas.width = 80; canvas.height = 80
+    const size = 300
+    canvas.width = size; canvas.height = size
     const ctx = canvas.getContext('2d')
     const img = new Image()
-    img.src = src
     img.crossOrigin = 'anonymous'
     img.onload = () => {
       try {
         ctx.beginPath()
-        ctx.arc(40, 40, 40, 0, Math.PI * 2)
+        ctx.arc(size/2, size/2, size/2, 0, Math.PI * 2)
+        ctx.closePath()
         ctx.clip()
-        ctx.drawImage(img, 0, 0, 80, 80)
+        ctx.drawImage(img, 0, 0, size, size)
       } catch(e) {}
       try { resolve(canvas.toDataURL('image/png')) } catch(e) { resolve(null) }
     }
     img.onerror = () => resolve(null)
+    img.src = src
   })
 
   const logo1 = await loadLogoRond('logo.png')
