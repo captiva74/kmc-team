@@ -1177,7 +1177,7 @@ async function exporterEngagement() {
 
   const loadLogoRond = (src) => new Promise(resolve => {
     const canvas = document.createElement('canvas')
-    canvas.width = 300; canvas.height = 300
+    canvas.width = 80; canvas.height = 80
     const ctx = canvas.getContext('2d')
     const img = new Image()
     img.src = src
@@ -1187,7 +1187,7 @@ async function exporterEngagement() {
         ctx.beginPath()
         ctx.arc(40, 40, 40, 0, Math.PI * 2)
         ctx.clip()
-        ctx.drawImage(img, 0, 0, 300, 300)
+        ctx.drawImage(img, 0, 0, 80, 80)
       } catch(e) {}
       try { resolve(canvas.toDataURL('image/png')) } catch(e) { resolve(null) }
     }
