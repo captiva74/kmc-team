@@ -1016,7 +1016,31 @@ async function exporterPDF() {
 
   doc.setFillColor(13, 15, 20)
   doc.rect(0, 0, 210, 45, 'F')
-  try { doc.addImage('logo.png', 'PNG', 14, 5, 30, 30) } catch(e) {}
+
+  const logoCanvas = document.createElement('canvas')
+  logoCanvas.width = 200; logoCanvas.height = 200
+  const logoCtx = logoCanvas.getContext('2d')
+  const logoImg = new Image()
+  logoImg.crossOrigin = 'anonymous'
+  await new Promise(resolve => {
+    logoImg.onload = () => {
+      try {
+        logoCtx.fillStyle = '#0d0f14'
+        logoCtx.fillRect(0, 0, 200, 200)
+        logoCtx.beginPath()
+        logoCtx.arc(100, 100, 100, 0, Math.PI * 2)
+        logoCtx.clip()
+        logoCtx.drawImage(logoImg, 0, 0, 200, 200)
+      } catch(e) {}
+      resolve()
+    }
+    logoImg.onerror = resolve
+    logoImg.src = 'logo.png'
+  })
+  try {
+    const logoData = logoCanvas.toDataURL('image/png')
+    doc.addImage(logoData, 'PNG', 14, 5, 30, 30)
+  } catch(e) {}
 
   doc.setTextColor(30, 120, 220)
   doc.setFontSize(22)
@@ -1151,7 +1175,7 @@ async function exporterEngagement() {
   const categorie = document.getElementById('eng-categorie').value
   const dateAff = date ? new Date(date).toLocaleDateString('fr-FR') : ''
 
-  const loadLogoRond = (src) => new Promise(resolve => {
+const loadLogoRond = (src) => new Promise(resolve => {
     const canvas = document.createElement('canvas')
     canvas.width = 200; canvas.height = 200
     const ctx = canvas.getContext('2d')
@@ -1161,7 +1185,12 @@ async function exporterEngagement() {
       try {
         ctx.fillStyle = '#ffffff'
         ctx.fillRect(0, 0, 200, 200)
+        ctx.save()
+        ctx.beginPath()
+        ctx.arc(100, 100, 100, 0, Math.PI * 2)
+        ctx.clip()
         ctx.drawImage(img, 0, 0, 200, 200)
+        ctx.restore()
       } catch(e) {}
       try { resolve(canvas.toDataURL('image/png')) } catch(e) { resolve(null) }
     }
