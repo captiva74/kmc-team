@@ -1014,32 +1014,9 @@ async function exporterPDF() {
 
   const aujourd = new Date().toLocaleDateString('fr-FR')
 
-  const loadLogoRond = (src) => new Promise(resolve => {
-    const canvas = document.createElement('canvas')
-    canvas.width = 200; canvas.height = 200
-    const ctx = canvas.getContext('2d')
-    const img = new Image()
-    img.crossOrigin = 'anonymous'
-    img.onload = () => {
-      try {
-        ctx.clearRect(0, 0, 200, 200)
-        ctx.beginPath()
-        ctx.arc(100, 100, 100, 0, Math.PI * 2)
-        ctx.clip()
-        ctx.drawImage(img, 0, 0, 200, 200)
-      } catch(e) {}
-      try { resolve(canvas.toDataURL('image/png')) } catch(e) { resolve(null) }
-    }
-    img.onerror = () => resolve(null)
-    img.src = src
-  })
-
-  const logoData = await loadLogoRond('logo.png')
-
   doc.setFillColor(13, 15, 20)
   doc.rect(0, 0, 210, 45, 'F')
-
-  if (logoData) { try { doc.addImage(logoData, 'PNG', 14, 5, 30, 30) } catch(e) {} }
+  try { doc.addImage('logo.png', 'PNG', 14, 5, 30, 30) } catch(e) {}
 
   doc.setTextColor(30, 120, 220)
   doc.setFontSize(22)
@@ -1448,26 +1425,9 @@ async function exporterEngagement() {
   const categorie = document.getElementById('eng-categorie').value
   const dateAff = date ? new Date(date).toLocaleDateString('fr-FR') : ''
 
-  const loadLogo = (src) => new Promise(resolve => {
-    const canvas = document.createElement('canvas')
-    canvas.width = 80; canvas.height = 80
-    const ctx = canvas.getContext('2d')
-    const img = new Image()
-    img.crossOrigin = 'anonymous'
-    img.onload = () => {
-      try {
-        ctx.fillStyle = '#ffffff'
-        ctx.fillRect(0, 0, 300, 300)
-        ctx.drawImage(img, 0, 0, 300, 300)
-      } catch(e) {}
-      try { resolve(canvas.toDataURL('image/png')) } catch(e) { resolve(null) }
-    }
-    img.onerror = () => resolve(null)
-    img.src = src
-  })
-
-  const logo1 = await loadLogo('logo.png')
-  if (logo1) { try { doc.addImage(logo1, 'PNG', 8, 4, 35, 35) } catch(e) {} }
+  try {
+    doc.addImage('logo.png', 'PNG', 8, 4, 35, 35)
+  } catch(e) {}
 
   // Texte français en haut au centre
   doc.setTextColor(30, 120, 220)
